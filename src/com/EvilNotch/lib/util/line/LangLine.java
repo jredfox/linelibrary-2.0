@@ -33,6 +33,16 @@ public class LangLine implements ILineHead{
 	{
 		return JavaUtil.asList(this.value);
 	}
+	/**
+	 * return null if index isn't 0
+	 */
+	@Override
+	public Object getHeadAtIndex(int index) 
+	{
+		if(index != 0)
+			return null;
+		return this.value;
+	}
 	
 	@Override
 	public boolean equals(Object obj)

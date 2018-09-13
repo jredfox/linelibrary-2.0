@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.ILine;
+import com.EvilNotch.lib.util.line.ILineMeta;
 import com.EvilNotch.lib.util.line.Line;
 import com.EvilNotch.lib.util.line.LineArray;
 import com.EvilNotch.lib.util.line.LineMeta;
@@ -81,10 +82,13 @@ public class ConfigLine {
 		for(String str : list)
 		{
 			str = str.trim();
+			if(JavaUtil.toWhiteSpaced(str).equals("") || str.startsWith("<"))
+				continue;
 			int index = str.indexOf(this.commentStart);
 			if(index == 0)
 				continue;
 			str = removeComments(str);
+//			System.out.println("\"" + str + "\"");
 			this.lines.add(getLineFromString(str));
 		}
 	}
@@ -130,12 +134,26 @@ public class ConfigLine {
 	
 	public void addLine(ILine line)
 	{
-		if(!this.containsLine(line))
+		if(!this.containsLine(line,true))
 			this.lines.add(line);
 	}
-	@Deprecated
-	public boolean containsLine(ILine line) 
+	/**
+	 * see if there is another line or not here already by comparing it's id and possibly metadata
+	 */
+	public boolean containsLine(ILine c,boolean compareMeta) 
 	{
+		for(ILine l : this.lines)
+		{
+			if(l.equals(c))
+			{
+				if(!compareMeta || !(l instanceof ILineMeta) && !(c instanceof ILineMeta) )
+					return true;
+				ILineMeta line = (ILineMeta)l;
+				ILineMeta compare = (ILineMeta)c;
+				if(line.equalsMeta(compare) || compare.equalsMeta(line))
+					return true;
+			}
+		}
 		return false;
 	}
 
@@ -147,6 +165,19 @@ public class ConfigLine {
 	public void removeLine(ILine line)
 	{
 		this.lines.remove(line);
+	}
+	/**
+	 * for printlines do not use this for parsing to/from disk for actual files as strings can only hold so many chars
+	 */
+	@Override
+	public String toString()
+	{
+		StringBuilder builder = new StringBuilder();
+		for(ILine line : this.lines)
+			builder.append(line + "\r\n");
+		String str = builder.toString();
+		str = str.substring(0, str.length()-2);
+		return str;
 	}
 
 }

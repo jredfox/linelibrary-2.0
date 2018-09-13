@@ -53,11 +53,6 @@ public class Line implements ILineSeperation{
 	}
 
 	@Override
-	public String[] getMetaData() {
-		return null;
-	}
-
-	@Override
 	public char getSeprator() {
 		return this.seperator;
 	}

@@ -40,6 +40,17 @@ public class LineArray extends LineMeta implements ILineHead{
 	{
 		return heads;
 	}
+	/**
+	 * return actual objects when applicable
+	 */
+	@Override
+	public Object getHeadAtIndex(int index) 
+	{
+		Object obj = this.heads.get(index);
+		if(obj instanceof Entry)
+			obj = ((Entry)obj).obj;
+		return obj;
+	}
 	@Override
 	public String toString()
 	{

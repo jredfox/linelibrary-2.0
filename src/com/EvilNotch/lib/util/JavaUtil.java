@@ -1037,6 +1037,8 @@ public class JavaUtil {
 				break;
 			}
 		}
+		if(parts[0] == null)
+			return new String[]{s};
 		return parts;
 	}
 	public static String parseQuotes(String s, int index,String q) 

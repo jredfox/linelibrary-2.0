@@ -2,7 +2,7 @@ package com.EvilNotch.lib.util.line;
 
 import com.EvilNotch.lib.util.JavaUtil;
 
-public class LineMeta extends Line{
+public class LineMeta extends Line implements ILineMeta{
 
 	public String meta = null;
 	public String nbt = null;
@@ -23,14 +23,30 @@ public class LineMeta extends Line{
 		this.nbt = JavaUtil.parseQuotes(str, currentIndex, "{}");
 		if(!this.nbt.isEmpty())
 			this.nbt = "{" + this.nbt + "}";
-		else
-			this.nbt = null;
 	}
 	
 	@Override
 	public int hashCode()
 	{
 		return this.toString().hashCode();
+	}
+	@Override
+	public boolean equalsMeta(ILineMeta other)
+	{
+		String[] meta = this.getMetaData();
+		String[] otherMeta = other.getMetaData();
+		
+		if(meta == null)
+			return otherMeta == null;
+		else if(meta.length != otherMeta.length)
+			return false;
+		
+		for(int i=0;i<meta.length;i++)
+		{
+			if(!meta[i].equals(otherMeta[i]))
+				return false;
+		}
+		return true;
 	}
 	
 	@Override
@@ -47,7 +63,7 @@ public class LineMeta extends Line{
 	@Override
 	public String[] getMetaData()
 	{
-		return new String[]{this.meta,nbt};
+		return new String[]{this.meta,this.nbt};
 	}
 
 }
