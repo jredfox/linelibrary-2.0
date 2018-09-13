@@ -53,7 +53,7 @@ public class LineMeta extends Line implements ILineMeta{
 		String m = "";
 		if(!this.meta.isEmpty())
 			m += " <" + this.meta + ">";
-		if(this.nbt != null)
+		if(this.nbt != null && !this.nbt.isEmpty())
 			m += " " + this.nbt;
 		return super.toString() + m;
 	}

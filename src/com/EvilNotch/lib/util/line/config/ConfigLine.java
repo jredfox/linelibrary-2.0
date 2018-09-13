@@ -88,12 +88,12 @@ public class ConfigLine {
 			if(index == 0)
 				continue;
 			str = removeComments(str);
-//			System.out.println("\"" + str + "\"");
 			this.lines.add(getLineFromString(str));
 		}
 	}
+	
     /**
-     * Removes UTF-8 Byte Order Marks for windows note pad compatability
+     * Removes UTF-8 Byte Order Marks for windows note pad compatibility
      */
     public void removeBOM(List<String> list) 
     {
@@ -128,45 +128,77 @@ public class ConfigLine {
 		}
 		else if(str.contains("<") || str.contains("{"))
 			return new LineMeta(str);
-		
+
 		return new Line(str);
 	}
-	
-	public void addLine(ILine line)
+	/**
+	 * add a line if and only if it doesn't exist
+	 */
+	public boolean addLine(ILine line)
 	{
 		if(!this.containsLine(line,true))
-			this.lines.add(line);
+		{
+			return this.lines.add(line);
+		}
+		return false;
 	}
 	/**
 	 * see if there is another line or not here already by comparing it's id and possibly metadata
 	 */
 	public boolean containsLine(ILine c,boolean compareMeta) 
 	{
-		for(ILine l : this.lines)
+		return this.getLineIndex(c, compareMeta) != -1;
+	}
+	/**
+	 * get the line as an index in the file you can't remove meta lines without them
+	 * @return -1 if doesn't exist
+	 */
+	public int getLineIndex(ILine c,boolean compareMeta)
+	{
+		for(int i=0;i<this.lines.size();i++)
 		{
+			ILine l = this.lines.get(i);
 			if(l.equals(c))
 			{
 				if(!compareMeta)
-					return true;
-				else if(!(l instanceof ILineMeta) && c instanceof LineMeta || l instanceof ILineMeta && !(c instanceof ILineMeta) )
+					return i;
+				if(!(l instanceof ILineMeta) && c instanceof LineMeta || l instanceof ILineMeta && !(c instanceof ILineMeta) )
 					continue;
 				ILineMeta line = (ILineMeta)l;
 				ILineMeta compare = (ILineMeta)c;
-				if(line.equalsMeta(compare) || compare.equalsMeta(line))
-					return true;
+				if(line.equalsMeta(compare) && compare.equalsMeta(line))
+					return i;
 			}
 		}
-		return false;
+		return -1;
 	}
 
 	public void appendLine(ILine line)
 	{
 		this.lines.add(line);
 	}
-	@Deprecated
+	
 	public void removeLine(ILine line)
 	{
-		this.lines.remove(line);
+		this.removeLine(line,true);
+	}
+	
+	public void removeLine(ILine line,boolean compareMeta)
+	{
+		int index = this.getLineIndex(line, compareMeta);
+		if(index != -1)
+			this.lines.remove(index);
+	}
+	/**
+	 * set a line at it's index if doesn't exist add a line
+	 */
+	public void setLine(ILine line)
+	{
+		int index = this.getLineIndex(line, true);
+		if(index != -1)
+			this.lines.set(index,line);
+		else
+			this.lines.add(line);
 	}
 	/**
 	 * for printlines do not use this for parsing to/from disk for actual files as strings can only hold so many chars
