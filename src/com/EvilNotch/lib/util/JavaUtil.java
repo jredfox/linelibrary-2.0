@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -35,6 +36,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.EvilNotch.lib.util.line.config.ConfigLine;
+
 import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
@@ -1055,6 +1059,95 @@ public class JavaUtil {
 		}
 		return strid;
 	}
-	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static List<Object> asList(Object... values) 
+	{
+		List list = new ArrayList();
+		for(Object obj : values)
+			list.add(obj);
+		return list;
+	}
+	/**
+	 * Ejects a string that is whitespaced
+	 * @param s
+	 * @return
+	 */
+	public static String toWhiteSpaced(String s)
+	{
+		return s.replaceAll("\\s+", "");
+	}
+	public static boolean isStringNum(String s)
+	{
+		String valid = "1234567890.-";
+		String valid_endings = "bslfdi";//byte,short,long,float,double,int
+		String check = ".";
+		int indexdot = 0;
+		if(s.indexOf('.') == 0 || s.indexOf('.') == s.length() - 1 || s.indexOf('-') > 0)
+			return false;
+		for(int i=0;i<s.length();i++)
+		{
+			String character = s.substring(i, i+1);
+			boolean lastindex = i == s.length() -1;
+			if(check.contains(character))
+			{
+				if(character.equals("."))
+					indexdot++;
+				
+				if(indexdot > 1)
+					return false;
+			}
+			if(!valid.contains(character))
+			{
+				if(i + 1 < s.length())
+					return false;
+				if(lastindex)
+					return valid_endings.contains(character.toLowerCase());
+			}
+		}
+		return true;
+	}
+	public static List<String> getFileLines(String inputStream) 
+	{
+		BufferedReader reader = null;
+		List<String> list = null;
+		try
+		{
+			reader = new BufferedReader(new InputStreamReader(ConfigLine.class.getClassLoader().getResourceAsStream(inputStream),StandardCharsets.UTF_8));
+			list = new ArrayList<String>();
+			String s = reader.readLine();
+			
+			if(s != null)
+			{
+				list.add(s);
+			}
+			
+			while(s != null)
+			{
+				s = reader.readLine();
+				if(s != null)
+				{
+					list.add(s);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			if(reader != null)
+			{
+				try 
+				{
+					reader.close();
+				} catch (IOException e) 
+				{
+					System.out.println("Unable to Close InputStream this is bad");
+				}	
+			}
+		}
+		return list;
+	}
 	
 }

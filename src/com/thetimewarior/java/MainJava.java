@@ -1,14 +1,12 @@
 package com.thetimewarior.java;
 
-import com.EvilNotch.lib.util.Line.Line;
-import com.EvilNotch.lib.util.Line.LineMeta;
-
+import com.EvilNotch.lib.util.line.LineArray;
 
 public class MainJava {
 	
 	public static void main(String[] args)
 	{
-		LineMeta line = new LineMeta("modid:block <int> {nbt} = 20",':');
+		LineArray line = new LineArray("modid:block <int> {nbt} = (20)",':');
 		System.out.println(line);
 	}
 
