@@ -146,8 +146,10 @@ public class ConfigLine {
 		{
 			if(l.equals(c))
 			{
-				if(!compareMeta || !(l instanceof ILineMeta) && !(c instanceof ILineMeta) )
+				if(!compareMeta)
 					return true;
+				else if(!(l instanceof ILineMeta) && c instanceof LineMeta || l instanceof ILineMeta && !(c instanceof ILineMeta) )
+					continue;
 				ILineMeta line = (ILineMeta)l;
 				ILineMeta compare = (ILineMeta)c;
 				if(line.equalsMeta(compare) || compare.equalsMeta(line))

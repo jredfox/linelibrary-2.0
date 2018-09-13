@@ -36,9 +36,7 @@ public class LineMeta extends Line implements ILineMeta{
 		String[] meta = this.getMetaData();
 		String[] otherMeta = other.getMetaData();
 		
-		if(meta == null)
-			return otherMeta == null;
-		else if(meta.length != otherMeta.length)
+		if(meta.length != otherMeta.length)
 			return false;
 		
 		for(int i=0;i<meta.length;i++)
