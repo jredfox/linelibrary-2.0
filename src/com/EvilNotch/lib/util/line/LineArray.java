@@ -52,6 +52,11 @@ public class LineArray extends LineMeta implements ILineHead{
 		return obj;
 	}
 	@Override
+	public int size()
+	{
+		return this.heads.size();
+	}
+	@Override
 	public String toString(boolean comparible)
 	{
 		//don't compare head values when organizing the lines alphabetically
@@ -151,9 +156,16 @@ public class LineArray extends LineMeta implements ILineHead{
 		@Override
 		public String toString()
 		{
-			if(this.obj instanceof Number || this.obj instanceof String)
+			if(this.obj instanceof Number)
 			{
 				return this.obj.toString() + (this.id == ' ' ? "" : this.id);
+			}
+			else if(this.obj instanceof String)
+			{
+				String quote = "";
+				if(this.id != ' ')
+					quote += this.id;
+				return quote + this.obj.toString() + quote;
 			}
 			return this.obj.toString();
 		}

@@ -1,6 +1,7 @@
 package com.EvilNotch.lib.util.line;
 
 import com.EvilNotch.lib.util.JavaUtil;
+import com.EvilNotch.lib.util.line.config.IComment;
 
 public class Line implements ILineSeperation{
 	
@@ -10,6 +11,7 @@ public class Line implements ILineSeperation{
 	public char seperator;
 	public char quote;
 	public boolean hasQuote;
+	public IComment comment;
 	
 	public Line(String str)
 	{
@@ -30,6 +32,7 @@ public class Line implements ILineSeperation{
 		String[] parts = JavaUtil.splitFirst(str, sep);
 		this.modid = parts[0].trim();
 		
+		//parse the name
 		if(parts.length == 2)
 		{
 			if(this.hasQuote)
@@ -107,6 +110,11 @@ public class Line implements ILineSeperation{
 		if(this.hasQuote && !comparible)
 			str = "" + this.quote + str + this.quote;
 		return str;
+	}
+
+	@Override
+	public IComment getComment() {
+		return this.comment;
 	}
 
 }

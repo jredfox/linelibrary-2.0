@@ -1,5 +1,7 @@
 package com.EvilNotch.lib.util.line;
 
+import com.EvilNotch.lib.util.line.config.IComment;
+
 import net.minecraft.util.ResourceLocation;
 
 public interface ILine extends Comparable<ILine>{
@@ -13,6 +15,8 @@ public interface ILine extends Comparable<ILine>{
 	 * return the lines string you want it to be sorted by
 	 */
 	public String getComparible();
+	
+	public IComment getComment();
 	
 	/**
 	 * turn the line into a resource location

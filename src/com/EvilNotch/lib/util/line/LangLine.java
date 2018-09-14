@@ -3,6 +3,7 @@ package com.EvilNotch.lib.util.line;
 import java.util.List;
 
 import com.EvilNotch.lib.util.JavaUtil;
+import com.EvilNotch.lib.util.line.config.IComment;
 
 public class LangLine implements ILineHead{
 	
@@ -43,6 +44,11 @@ public class LangLine implements ILineHead{
 			return null;
 		return this.value;
 	}
+	@Override
+	public int size()
+	{
+		return this.value != null ? 1 : 0;
+	}
 	
 	@Override
 	public boolean equals(Object obj)
@@ -63,6 +69,13 @@ public class LangLine implements ILineHead{
 	public String toString()
 	{
 		return this.key + "=" + this.value;
+	}
+	/**
+	 * comments are not allowed in these files
+	 */
+	@Override
+	public IComment getComment() {
+		return null;
 	}
 
 }

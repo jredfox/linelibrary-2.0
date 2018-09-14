@@ -2,7 +2,9 @@ package com.EvilNotch.lib.util.line.config;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.ILine;
@@ -15,7 +17,27 @@ public class ConfigLine {
 	
 	public List<ILine> lines = new ArrayList<ILine>();
 	public File file = null;
+	/**
+	 * this is what signifys a comment for the config start
+	 */
 	public char commentStart = '#';
+	/**
+	 * this is to see if the config needs to save or not
+	 */
+	public List<String> origin = new ArrayList<String>();
+	/**
+	 * comments above the header
+	 */
+	public List<Comment> headerComments = new ArrayList<Comment>();
+	/**
+	 * comments attached to the lines either above or directly in front
+	 */
+	public List<Comment> comments = new ArrayList<Comment>();
+	/**
+	 * fancy header for example "<"DungeonMobs">"
+	 */
+	public String header = "";
+	public char[] headerWrappers = new char[]{'<','/','>'};
 	
 	public ConfigLine(String inputStream,File output)
 	{
@@ -32,6 +54,7 @@ public class ConfigLine {
 	public void readConfig()
 	{
 		this.lines.clear();
+		this.comments.clear();
 		try
 		{
 			List<String> list = JavaUtil.getFileLines(this.file,true);
@@ -45,6 +68,7 @@ public class ConfigLine {
 	public void readConfigFromJar(String stream) 
 	{
 		this.lines.clear();
+		this.comments.clear();
 		try
 		{
 			List<String> list = JavaUtil.getFileLines(stream);
@@ -58,35 +82,85 @@ public class ConfigLine {
 	/**
 	 * calling this directly will save the config to the disk/input stream
 	 */
-	public void saveConfig()
+	protected void saveConfig(List<String> list)
 	{
-		List<String> list = new ArrayList<String>();
-		for(ILine line : this.lines)
-			list.add(line.toString());
 		try
 		{
 			JavaUtil.saveFileLines(list, this.file, true);
+			this.origin = list;
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
+	public void saveConfig(boolean alphabitize)
+	{
+		List<String> list = new ArrayList<String>();
+		if(alphabitize)
+			this.alphabitize();
+		for(Comment c : this.headerComments)
+			list.add(c.toString());
+		if(!this.headerComments.isEmpty())
+			list.add("\r\n\r\n");
+		if(!this.header.isEmpty())
+			list.add(this.headerWrappers[0] + this.header + this.headerWrappers[2] + "\r\n\r\n");
+		for(ILine line : this.lines)
+			list.add(line.toString());
+		if(!this.header.isEmpty())
+			list.add("\r\n\r\n" + this.headerWrappers[0] + this.headerWrappers[1] + this.header + this.headerWrappers[2]);
+		
+		if(!list.equals(this.origin))
+			this.saveConfig(list);
+	}
 	
+	public void alphabitize() {
+		Collections.sort(this.lines);
+	}
+	public void shuffle(){
+		Collections.shuffle(this.lines);
+	}
+	public void shuffle(Random rnd){
+		Collections.shuffle(this.lines,rnd);
+	}
+	/**
+	 * don't use this unless you want all data getting cleared
+	 */
+	public void resetConfig(){
+		this.lines.clear();
+		this.comments.clear();
+		this.readConfig();
+	}
+	/**
+	 * restore it to the last time the config was read or saved to/from the disk
+	 */
+	public void restoreConfig(){
+		this.saveConfig(this.origin);
+	}
+
 	/**
 	 * parse the lines from the file
 	 */
 	protected void parseLines(List<String> list) 
 	{
 		removeBOM(list);
+		this.origin = list;
 		for(String str : list)
 		{
 			str = str.trim();
-			if(JavaUtil.toWhiteSpaced(str).equals("") || str.startsWith("<"))
+			String whitespaced = JavaUtil.toWhiteSpaced(str);
+			if(whitespaced.equals("") || whitespaced.startsWith(this.header) && !this.header.isEmpty())
 				continue;
 			int index = str.indexOf(this.commentStart);
 			if(index == 0)
+			{
+				this.comments.add(new Comment(this.commentStart,str));
 				continue;
+			}
+			else if(index != -1)
+			{
+				this.comments.add(new Comment(this.commentStart,str.substring(index, str.length())));
+			}
 			str = removeComments(str);
 			this.lines.add(getLineFromString(str));
 		}
