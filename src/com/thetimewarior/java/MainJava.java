@@ -13,8 +13,8 @@ public class MainJava {
 	{
 		long stamp = System.currentTimeMillis();
 		ConfigLine cfg = new ConfigLine(new File("C:/Users/jredfox/Desktop/minecraft.txt"));
-		cfg.addLine(new LineArray("\"minecraft:creeper\" = 100"));
-//		System.out.println(cfg);
+//		cfg.addLine();
+		System.out.println(new LineArray("\"minecraft:creeper\" <\"int\"> {powered:1}= (\"100\")").toString());
 		JavaUtil.printTime(stamp, "Done:");
 	}
 

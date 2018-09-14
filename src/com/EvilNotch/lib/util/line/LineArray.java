@@ -7,18 +7,18 @@ import com.EvilNotch.lib.util.JavaUtil;
 
 public class LineArray extends LineMeta implements ILineHead{
 
-	public List<Object> heads = new ArrayList();
+	public List<Object> heads = new ArrayList<Object>();
 	public char lbracket = ' ';
 	public char rbracket = ' ';
 	
 	public LineArray(String str)
 	{
-		this(str,':');
+		this(str,':','"');
 	}
 	
-	public LineArray(String str, char sep) 
+	public LineArray(String str, char sep,char q) 
 	{
-		super(str, sep);
+		super(str, sep,q);
 		if(str.contains("="))
 		{
 			str = JavaUtil.splitFirst(str,'=')[1].trim();
@@ -52,9 +52,12 @@ public class LineArray extends LineMeta implements ILineHead{
 		return obj;
 	}
 	@Override
-	public String toString()
+	public String toString(boolean comparible)
 	{
-		String str = super.toString();
+		//don't compare head values when organizing the lines alphabetically
+		if(comparible)
+			return super.toString(comparible);
+		String str = super.toString(comparible);
 		if(!this.heads.isEmpty())
 		{
 			str += " = ";
@@ -129,7 +132,7 @@ public class LineArray extends LineMeta implements ILineHead{
 				idNum = JavaUtil.toUpperCaseChar(idNum);
 			return  new Entry(obj,idNum);
 		}
-		return weight;
+		return new Entry(JavaUtil.parseQuotes(weight, 0, "" + this.quote),this.quote);
 	}
 	
 	public class Entry
@@ -140,7 +143,7 @@ public class LineArray extends LineMeta implements ILineHead{
 		{
 			 this(obj,' ');
 		}
-		public Entry(Object obj, char c) 
+		public Entry(Object obj,char c)
 		{
 			this.obj = obj;
 			this.id = c;
@@ -148,7 +151,7 @@ public class LineArray extends LineMeta implements ILineHead{
 		@Override
 		public String toString()
 		{
-			if(this.obj instanceof Number)
+			if(this.obj instanceof Number || this.obj instanceof String)
 			{
 				return this.obj.toString() + (this.id == ' ' ? "" : this.id);
 			}
