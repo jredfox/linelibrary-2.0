@@ -128,7 +128,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	{
 		for(String s : str)
 		{
-			if(s.startsWith("["))
+			if(s.startsWith("" + this.lbracket))
 			{
 				List<Object> newList = new ArrayList<Object>();
 				list.add(newList);
