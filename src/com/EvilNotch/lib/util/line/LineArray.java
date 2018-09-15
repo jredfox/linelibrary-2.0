@@ -8,8 +8,8 @@ import com.EvilNotch.lib.util.JavaUtil;
 public class LineArray extends LineMeta implements ILineHeadArray{
 
 	public List<Object> heads = new ArrayList<Object>();
-	public char lbracket = '[';
-	public char rbracket = ']';
+	public char lbracket = ' ';
+	public char rbracket = ' ';
 	
 	public LineArray(String str)
 	{
@@ -28,6 +28,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 				this.rbracket = str.charAt(str.length()-1);
 				str = str.substring(1, str.length()-1);
 			}
+			
 			String[] toParse = selectString(str, ',',q,this.lbracket,this.rbracket);
 			parseHead(toParse,this.heads);
 		}
@@ -128,7 +129,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	{
 		for(String s : str)
 		{
-			if(s.startsWith("" + this.lbracket))
+			if(s.startsWith("" + this.lbracket) && this.lbracket != ' ')
 			{
 				List<Object> newList = new ArrayList<Object>();
 				list.add(newList);
@@ -199,7 +200,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 				idNum = JavaUtil.toUpperCaseChar(idNum);
 			return  new Entry(obj,idNum);
 		}
-		return new Entry(JavaUtil.parseQuotes(weight, 0, "" + this.quote),this.quote);
+		return weight.contains("" + this.quote) ? new Entry(JavaUtil.parseQuotes(weight, 0, "" + this.quote),this.quote) : new Entry(weight.trim());
 	}
 	
 	public class Entry
