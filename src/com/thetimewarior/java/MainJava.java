@@ -14,8 +14,10 @@ public class MainJava {
 		long stamp = System.currentTimeMillis();
 		ConfigLine cfg = new ConfigLine(new File("C:/Users/jredfox/Desktop/minecraft.txt"));
 		cfg.header = "DungeonTweaks";
-		cfg.alphabitize();
-		System.out.print(cfg);
+		cfg.origin = cfg.toFileLines();
+//		cfg.alphabitize();
+		cfg.saveConfig(false);
+//		System.out.print(cfg);
 		JavaUtil.printTime(stamp, "Done:");
 	}
 

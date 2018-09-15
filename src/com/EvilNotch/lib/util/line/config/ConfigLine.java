@@ -91,20 +91,35 @@ public class ConfigLine {
 		try
 		{
 			JavaUtil.saveFileLines(list, this.file, true);
-			this.origin = list;
+			this.origin = this.toFileLines();
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
+	
+	public void saveConfig()
+	{
+		this.saveConfig(false);
+	}
+	
 	public void saveConfig(boolean alphabitize)
+	{
+		this.saveConfig(alphabitize,true);
+	}
+	
+	public void saveConfig(boolean alphabitize,boolean msg)
 	{
 		if(alphabitize)
 			this.alphabitize();
 		List<String> list = toFileLines();
 		if(!list.equals(this.origin))
+		{
+			if(msg)
+				System.out.println("Saving Config:" + this.file);
 			this.saveConfig(list);
+		}
 	}
 	/**
 	 * equilvent to toString() but, has capacity for more indexes then a single string
@@ -171,7 +186,7 @@ public class ConfigLine {
 	protected void parseLines(List<String> list) 
 	{
 		removeBOM(list);
-		this.origin = list;
+		this.origin.clear();
 		
 		int index_line = 0;
 		boolean passedHeader = false;
@@ -212,6 +227,7 @@ public class ConfigLine {
 			c.index = -1;
 			((ILineComment)line).addComment(c);
 		}
+		this.origin = this.toFileLines();
 	}
 	
     /**
