@@ -258,7 +258,7 @@ public class ConfigLine {
 	 */
 	public boolean addLine(ILine line)
 	{
-		if(!this.containsLine(line,true))
+		if(!this.containsLine(line,this.checkMetaByDefault()))
 		{
 			return this.lines.add(line);
 		}
@@ -302,7 +302,7 @@ public class ConfigLine {
 	
 	public void removeLine(ILine line)
 	{
-		this.removeLine(line,true);
+		this.removeLine(line,this.checkMetaByDefault());
 	}
 	
 	public void removeLine(ILine line,boolean compareMeta)
@@ -332,7 +332,7 @@ public class ConfigLine {
 	 */
 	public void setLine(ILine line)
 	{
-		int index = this.getLineIndex(line, true);
+		int index = this.getLineIndex(line, this.checkMetaByDefault());
 		if(index != -1)
 		{
 			ILine olde = this.lines.set(index,line);
@@ -361,6 +361,11 @@ public class ConfigLine {
 		for(String s : this.toFileLines())
 			builder.append(s);
 		return builder.toString();
+	}
+	
+	public boolean checkMetaByDefault()
+	{
+		return true;
 	}
 
 }
