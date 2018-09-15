@@ -3,11 +3,13 @@ package com.EvilNotch.lib.util.line.config;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.ILine;
+import com.EvilNotch.lib.util.line.ILineComment;
 import com.EvilNotch.lib.util.line.ILineMeta;
 import com.EvilNotch.lib.util.line.Line;
 import com.EvilNotch.lib.util.line.LineArray;
@@ -30,15 +32,19 @@ public class ConfigLine {
 	 */
 	public List<Comment> headerComments = new ArrayList<Comment>();
 	/**
-	 * comments attached to the lines either above or directly in front
+	 * temporary storage for comments during parsing
 	 */
-	public List<Comment> comments = new ArrayList<Comment>();
+	protected List<Comment> tmpComments = new ArrayList<Comment>();
 	/**
 	 * fancy header for example "<"DungeonMobs">"
 	 */
 	public String header = "";
 	public char[] headerWrappers = new char[]{'<','/','>'};
 	
+	/**
+	 * call this constructor if your reading from a jar/zip 
+	 * since jar files can't be modified only call this constructor if the output file doesn't exist
+	 */
 	public ConfigLine(String inputStream,File output)
 	{
 		this.file = output;
@@ -54,7 +60,6 @@ public class ConfigLine {
 	public void readConfig()
 	{
 		this.lines.clear();
-		this.comments.clear();
 		try
 		{
 			List<String> list = JavaUtil.getFileLines(this.file,true);
@@ -68,7 +73,6 @@ public class ConfigLine {
 	public void readConfigFromJar(String stream) 
 	{
 		this.lines.clear();
-		this.comments.clear();
 		try
 		{
 			List<String> list = JavaUtil.getFileLines(stream);
@@ -96,24 +100,49 @@ public class ConfigLine {
 	}
 	public void saveConfig(boolean alphabitize)
 	{
-		List<String> list = new ArrayList<String>();
 		if(alphabitize)
 			this.alphabitize();
-		for(Comment c : this.headerComments)
-			list.add(c.toString());
-		if(!this.headerComments.isEmpty())
-			list.add("\r\n\r\n");
-		if(!this.header.isEmpty())
-			list.add(this.headerWrappers[0] + this.header + this.headerWrappers[2] + "\r\n\r\n");
-		for(ILine line : this.lines)
-			list.add(line.toString());
-		if(!this.header.isEmpty())
-			list.add("\r\n\r\n" + this.headerWrappers[0] + this.headerWrappers[1] + this.header + this.headerWrappers[2]);
-		
+		List<String> list = toFileLines();
 		if(!list.equals(this.origin))
 			this.saveConfig(list);
 	}
-	
+	/**
+	 * equilvent to toString() but, has capacity for more indexes then a single string
+	 * @return
+	 */
+	public List<String> toFileLines() 
+	{
+		List<String> list = new ArrayList<String>();
+		for(Comment c : this.headerComments)
+			list.add(c.toString() + "\r\n");
+		if(!this.headerComments.isEmpty())
+			list.add("\r\n");
+		if(!this.header.isEmpty())
+			list.add(this.headerWrappers[0] + this.header + this.headerWrappers[2] + "\r\n\r\n");
+		
+		for(ILine l : this.lines)
+		{
+			if(l instanceof ILineComment)
+			{
+				ILineComment line = (ILineComment)l;
+				String attatched = "";
+				for(IComment c : line.getComments())
+				{
+					if(!c.isAttatched())
+						list.add(c.toString() + "\r\n");
+					else
+						attatched += c.toString();
+				}
+				list.add(line.toString() + attatched + "\r\n");				
+			}
+			else
+				list.add(l.toString() + "\r\n");
+		}
+		if(!this.header.isEmpty())
+			list.add("\r\n" + this.headerWrappers[0] + JavaUtil.toWhiteSpaced("" + this.headerWrappers[1]) + this.header + this.headerWrappers[2] + "\r\n");
+		return list;
+	}
+
 	public void alphabitize() {
 		Collections.sort(this.lines);
 	}
@@ -128,8 +157,6 @@ public class ConfigLine {
 	 */
 	public void resetConfig(){
 		this.lines.clear();
-		this.comments.clear();
-		this.readConfig();
 	}
 	/**
 	 * restore it to the last time the config was read or saved to/from the disk
@@ -145,24 +172,45 @@ public class ConfigLine {
 	{
 		removeBOM(list);
 		this.origin = list;
+		
+		int index_line = 0;
+		boolean passedHeader = false;
 		for(String str : list)
 		{
 			str = str.trim();
 			String whitespaced = JavaUtil.toWhiteSpaced(str);
-			if(whitespaced.equals("") || whitespaced.startsWith(this.header) && !this.header.isEmpty())
+			if(whitespaced.equals("") || whitespaced.startsWith("<"))
+			{
+				passedHeader = true;
 				continue;
+			}
 			int index = str.indexOf(this.commentStart);
 			if(index == 0)
 			{
-				this.comments.add(new Comment(this.commentStart,str));
+				if(passedHeader)
+					this.tmpComments.add(new Comment(this.commentStart,str.substring(1, str.length()),index_line));
+				else
+				{
+					//add custom header comments
+					Comment c = new Comment(this.commentStart,str.substring(1, str.length()),-1);
+					if(!this.headerComments.contains(c))
+						this.headerComments.add(c);
+				}
 				continue;
 			}
 			else if(index != -1)
 			{
-				this.comments.add(new Comment(this.commentStart,str.substring(index, str.length())));
+				this.tmpComments.add(new Comment(this.commentStart,str.substring(index, str.length()),true,index_line));
 			}
 			str = removeComments(str);
 			this.lines.add(getLineFromString(str));
+			index_line++;
+		}
+		for(Comment c : this.tmpComments)
+		{
+			ILine line = this.lines.get(c.index);
+			c.index = -1;
+			((ILineComment)line).addComment(c);
 		}
 	}
 	
@@ -261,7 +309,23 @@ public class ConfigLine {
 	{
 		int index = this.getLineIndex(line, compareMeta);
 		if(index != -1)
+		{
 			this.lines.remove(index);
+		}
+	}
+	
+	public void preserveLineComments(ILine newLine,ILine oldLine)
+	{
+		if(!(newLine instanceof ILineComment) || !(oldLine instanceof ILineComment))
+			return;
+		this.preserveLineComments((ILineComment)newLine,(ILineComment)oldLine);
+	}
+	public void preserveLineComments(ILineComment newLine, ILineComment oldLine) 
+	{
+		List<IComment> comments = newLine.getComments();
+		for(IComment c : oldLine.getComments())
+			if(!comments.contains(c))
+				comments.add(c);
 	}
 	/**
 	 * set a line at it's index if doesn't exist add a line
@@ -270,10 +334,23 @@ public class ConfigLine {
 	{
 		int index = this.getLineIndex(line, true);
 		if(index != -1)
-			this.lines.set(index,line);
+		{
+			ILine olde = this.lines.set(index,line);
+			this.preserveLineComments(line,olde);
+		}
 		else
-			this.lines.add(line);
+			this.appendLine(line);
 	}
+	
+	public List<IComment> getCommentsFromLine(ILine line) 
+	{
+		if(line instanceof ILineComment)
+		{
+			return ((ILineComment)line).getComments();
+		}
+		return null;
+	}
+
 	/**
 	 * for printlines do not use this for parsing to/from disk for actual files as strings can only hold so many chars
 	 */
@@ -281,11 +358,9 @@ public class ConfigLine {
 	public String toString()
 	{
 		StringBuilder builder = new StringBuilder();
-		for(ILine line : this.lines)
-			builder.append(line + "\r\n");
-		String str = builder.toString();
-		str = str.substring(0, str.length()-2);
-		return str;
+		for(String s : this.toFileLines())
+			builder.append(s);
+		return builder.toString();
 	}
 
 }

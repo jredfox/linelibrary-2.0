@@ -4,5 +4,6 @@ public interface IComment {
 	
 	public char getCommentStart();
 	public String getComment();
+	public boolean isAttatched();
 
 }

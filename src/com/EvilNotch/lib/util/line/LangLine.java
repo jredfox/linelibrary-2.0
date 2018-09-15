@@ -70,12 +70,5 @@ public class LangLine implements ILineHead{
 	{
 		return this.key + "=" + this.value;
 	}
-	/**
-	 * comments are not allowed in these files
-	 */
-	@Override
-	public IComment getComment() {
-		return null;
-	}
 
 }

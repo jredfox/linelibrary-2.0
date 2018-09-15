@@ -12,9 +12,10 @@ public class MainJava {
 	public static void main(String[] args)
 	{
 		long stamp = System.currentTimeMillis();
-//		ConfigLine cfg = new ConfigLine(new File("C:/Users/jredfox/Desktop/minecraft.txt"));
+		ConfigLine cfg = new ConfigLine(new File("C:/Users/jredfox/Desktop/minecraft.txt"));
+		cfg.header = "DungeonTweaks";
 //		cfg.addLine();
-		System.out.println(new LineArray("\"minecraft:creeper\" <\"int\"> {powered:1}= (\"100\")").toString());
+		System.out.print(cfg);
 		JavaUtil.printTime(stamp, "Done:");
 	}
 

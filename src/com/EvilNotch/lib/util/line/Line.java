@@ -1,9 +1,13 @@
 package com.EvilNotch.lib.util.line;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.EvilNotch.lib.util.JavaUtil;
+import com.EvilNotch.lib.util.line.config.Comment;
 import com.EvilNotch.lib.util.line.config.IComment;
 
-public class Line implements ILineSeperation{
+public class Line implements ILineSeperation,ILineComment{
 	
 	public String modid;
 	public String name;
@@ -11,7 +15,10 @@ public class Line implements ILineSeperation{
 	public char seperator;
 	public char quote;
 	public boolean hasQuote;
-	public IComment comment;
+	/**
+	 * list of comments attached to the list
+	 */
+	public List<IComment> comments = new ArrayList<IComment>();
 	
 	public Line(String str)
 	{
@@ -113,8 +120,18 @@ public class Line implements ILineSeperation{
 	}
 
 	@Override
-	public IComment getComment() {
-		return this.comment;
+	public void addComment(IComment c) {
+		this.comments.add(c);
+	}
+
+	@Override
+	public void removeComment(IComment c) {
+		this.comments.remove(c);
+	}
+
+	@Override
+	public List<IComment> getComments() {
+		return this.comments;
 	}
 
 }
