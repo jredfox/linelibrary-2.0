@@ -19,12 +19,14 @@ public class ConfigLine {
 	
 	public List<ILine> lines = new ArrayList<ILine>();
 	public File file = null;
+	public String stream = null;
+	
 	/**
 	 * this is what signifys a comment for the config start
 	 */
 	public char commentStart = '#';
 	/**
-	 * this is to see if the config needs to save or not
+	 * this is the last text file read when parsing also determines if config can save to disk saves ms
 	 */
 	public List<String> origin = new ArrayList<String>();
 	/**
@@ -48,16 +50,15 @@ public class ConfigLine {
 	public ConfigLine(String inputStream,File output)
 	{
 		this.file = output;
-		this.readConfigFromJar(inputStream);
+		this.stream = inputStream;
 	}
 
 	public ConfigLine(File f)
 	{
 		this.file = f;
-		this.readConfig();
 	}
 	
-	public void readConfig()
+	public void loadConfig()
 	{
 		this.lines.clear();
 		try
@@ -70,12 +71,12 @@ public class ConfigLine {
 			e.printStackTrace();
 		}
 	}
-	public void readConfigFromJar(String stream) 
+	public void loadConfigFromJar() 
 	{
 		this.lines.clear();
 		try
 		{
-			List<String> list = JavaUtil.getFileLines(stream);
+			List<String> list = JavaUtil.getFileLines(this.stream);
 			parseLines(list);
 		}
 		catch(Exception e)
@@ -91,7 +92,6 @@ public class ConfigLine {
 		try
 		{
 			JavaUtil.saveFileLines(list, this.file, true);
-			this.origin = this.toFileLines();
 		}
 		catch(Exception e)
 		{
@@ -106,34 +106,44 @@ public class ConfigLine {
 	
 	public void saveConfig(boolean alphabitize)
 	{
-		this.saveConfig(alphabitize,true);
+		this.saveConfig(alphabitize,false,true);
 	}
-	
-	public void saveConfig(boolean alphabitize,boolean msg)
+	/**
+	 * doesn't call alphabitize and no message will appear either. This is direct saveToDisk() method
+	 */
+	public void saveToDisk()
+	{
+		this.saveConfig(false, true, false);
+	}
+	/**
+	 * save config if and only if lines are different or it's forceably saved
+	 */
+	public void saveConfig(boolean alphabitize,boolean force,boolean msg)
 	{
 		if(alphabitize)
 			this.alphabitize();
 		List<String> list = toFileLines();
-		if(!list.equals(this.origin))
+		if(force || !list.equals(this.origin))
 		{
 			if(msg)
 				System.out.println("Saving Config:" + this.file);
 			this.saveConfig(list);
+			this.origin = list;
 		}
 	}
 	/**
-	 * equilvent to toString() but, has capacity for more indexes then a single string
+	 * equivalent to toString() but, has capacity for more indexes then a single string
 	 * @return
 	 */
 	public List<String> toFileLines() 
 	{
 		List<String> list = new ArrayList<String>();
 		for(Comment c : this.headerComments)
-			list.add(c.toString() + "\r\n");
+			list.add(c.toString());
 		if(!this.headerComments.isEmpty())
-			list.add("\r\n");
+			list.add("");
 		if(!this.header.isEmpty())
-			list.add(this.headerWrappers[0] + this.header + this.headerWrappers[2] + "\r\n\r\n");
+			list.add(this.headerWrappers[0] + this.header + this.headerWrappers[2] + "\r\n");
 		
 		for(ILine l : this.lines)
 		{
@@ -144,31 +154,39 @@ public class ConfigLine {
 				for(IComment c : line.getComments())
 				{
 					if(!c.isAttatched())
-						list.add(c.toString() + "\r\n");
+						list.add(c.toString());
 					else
 						attatched += c.toString();
 				}
-				list.add(line.toString() + attatched + "\r\n");				
+				list.add(line.toString() + attatched);				
 			}
 			else
-				list.add(l.toString() + "\r\n");
+				list.add(l.toString());
 		}
 		if(!this.header.isEmpty())
-			list.add("\r\n" + this.headerWrappers[0] + JavaUtil.toWhiteSpaced("" + this.headerWrappers[1]) + this.header + this.headerWrappers[2] + "\r\n");
+			list.add("\r\n" + this.headerWrappers[0] + JavaUtil.toWhiteSpaced("" + this.headerWrappers[1]) + this.header + this.headerWrappers[2]);
 		return list;
 	}
-
+	/**
+	 * ever wanted to alphabitize a file well go ahead you know you want perfection
+	 */
 	public void alphabitize() {
 		Collections.sort(this.lines);
 	}
+	/**
+	 * mess with people's ocd here
+	 */
 	public void shuffle(){
 		Collections.shuffle(this.lines);
 	}
+	/**
+	 * specify specific random to be the same shuffle every time
+	 */
 	public void shuffle(Random rnd){
 		Collections.shuffle(this.lines,rnd);
 	}
 	/**
-	 * don't use this unless you want all data getting cleared
+	 * piss the hell out of people
 	 */
 	public void resetConfig(){
 		this.lines.clear();
@@ -186,7 +204,6 @@ public class ConfigLine {
 	protected void parseLines(List<String> list) 
 	{
 		removeBOM(list);
-		this.origin.clear();
 		
 		int index_line = 0;
 		boolean passedHeader = false;
