@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.EvilNotch.lib.util.JavaUtil;
 
-public class LineArray extends LineMeta implements ILineHead{
+public class LineArray extends LineMeta implements ILineHeadArray{
 
 	public List<Object> heads = new ArrayList<Object>();
 	public char lbracket = ' ';
@@ -109,7 +109,7 @@ public class LineArray extends LineMeta implements ILineHead{
 			
 			//do general first
 			if(idNum == ' ' && !dflag){
-				obj = Long.parseLong(num);
+				obj = JavaUtil.castInt(Long.parseLong(num));//if greater then max value it equals max value
 			}
 			//byte
 			else if(idNum == 'b'){
@@ -170,5 +170,22 @@ public class LineArray extends LineMeta implements ILineHead{
 			return this.obj.toString();
 		}
 	}
-
+	/**
+	 * set the lines value
+	 */
+	@Override
+	public void setObject(Object obj,int index) 
+	{
+		if(!(obj instanceof Entry))
+		{
+			if(obj instanceof String)
+				obj = new Entry(obj,'"');
+			else if(obj instanceof Number && !(obj instanceof Integer) && !(obj instanceof Double))
+				obj = new Entry(obj,JavaUtil.getNumId((Number)obj) );
+			else
+				obj = new Entry(obj);
+		}
+		this.heads.set(index, obj);
+	}
+	
 }

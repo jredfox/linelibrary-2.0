@@ -131,7 +131,7 @@ public class ConfigLine {
 	{
 		if(alphabitize)
 			this.alphabitize();
-		List<String> list = toFileLines();
+		List<String> list = this.toFileLines();
 		if(force || !list.equals(this.origin))
 		{
 			if(msg)
@@ -255,9 +255,8 @@ public class ConfigLine {
 		}
 		for(Comment c : this.tmpComments)
 		{
-			if(c.index >= this.lines.size())
+			if(c.index == this.lines.size())
 			{
-				System.out.println("Adding footer comment:" + c);
 				this.footerComments.add(c);
 				continue;
 			}
@@ -417,7 +416,10 @@ public class ConfigLine {
 			builder.append(s + "\r\n");
 		return builder.toString();
 	}
-	
+	/**
+	 * tells whether or not the config will check meta by default when adding/setting/removing lines 
+	 * set to false if meta is only used as a config option not line identifier as well like powered creepers
+	 */
 	public boolean checkMetaByDefault()
 	{
 		return true;

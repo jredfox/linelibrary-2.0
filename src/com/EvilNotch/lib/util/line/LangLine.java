@@ -5,6 +5,10 @@ import java.util.List;
 import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.config.IComment;
 
+/**
+ * A Class used to simulate MC Lang Files tile.stone.name=value or anything split with key=value
+ * @author jredfox
+ */
 public class LangLine implements ILineHead{
 	
 	public String key;
@@ -29,25 +33,21 @@ public class LangLine implements ILineHead{
 		return this.key;
 	}
 
-	@Override
-	public List<Object> getHeads() 
-	{
-		return JavaUtil.asList(this.value);
-	}
 	/**
 	 * return null if index isn't 0
 	 */
 	@Override
-	public Object getHeadAtIndex(int index) 
+	public Object getHead() 
 	{
-		if(index != 0)
-			return null;
 		return this.value;
 	}
+	/**
+	 * set the display name to whatever
+	 */
 	@Override
-	public int size()
+	public void setHead(Object obj) 
 	{
-		return this.value != null ? 1 : 0;
+		this.value = (String)obj;
 	}
 	
 	@Override

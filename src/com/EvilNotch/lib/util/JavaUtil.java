@@ -1151,5 +1151,36 @@ public class JavaUtil {
 		}
 		return list;
 	}
+	/**
+	 * @return the char id based on the generic number object
+	 */
+	public static char getNumId(Number obj) 
+	{
+		if(obj instanceof Integer)
+		{
+			return 'i';
+		}
+		else if(obj instanceof Long)
+		{
+			return 'l';
+		}
+		else if(obj instanceof Short)
+		{
+			return 's';
+		}
+		else if(obj instanceof Byte)
+		{
+			return 'b';
+		}
+		else if(obj instanceof Float)
+		{
+			return 'f';
+		}
+		else if(obj instanceof Double)
+		{
+			return 'd';
+		}
+		return ' ';
+	}
 	
 }
