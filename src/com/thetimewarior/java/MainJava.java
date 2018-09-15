@@ -17,7 +17,7 @@ public class MainJava {
 		cfg.loadConfig();
 		cfg.alphabitize();
 		ILineHeadArray line = (ILineHeadArray) cfg.lines.get(0);
-		line.setObject(100, 0);
+		line.setHead(100, 0);
 		System.out.println(cfg);
 		cfg.saveConfig(false);
 		JavaUtil.printTime(stamp, "Done:");

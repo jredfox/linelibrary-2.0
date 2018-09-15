@@ -44,7 +44,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	 * return actual objects when applicable
 	 */
 	@Override
-	public Object getHeadAtIndex(int index) 
+	public Object getHead(int index) 
 	{
 		Object obj = this.heads.get(index);
 		if(obj instanceof Entry)
@@ -174,7 +174,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	 * set the lines value
 	 */
 	@Override
-	public void setObject(Object obj,int index) 
+	public void setHead(Object obj,int index) 
 	{
 		if(!(obj instanceof Entry))
 		{
