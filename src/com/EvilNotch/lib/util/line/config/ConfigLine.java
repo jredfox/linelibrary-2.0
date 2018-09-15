@@ -34,6 +34,10 @@ public class ConfigLine {
 	 */
 	public List<Comment> headerComments = new ArrayList<Comment>();
 	/**
+	 * a list of comments that starts below the ffile
+	 */
+	public List<Comment> footerComments = new ArrayList<Comment>();
+	/**
 	 * temporary storage for comments during parsing
 	 */
 	protected List<Comment> tmpComments = new ArrayList<Comment>();
@@ -71,12 +75,17 @@ public class ConfigLine {
 			e.printStackTrace();
 		}
 	}
-	public void loadConfigFromJar() 
+	
+	public void loadConfigFromJar(){
+		this.loadConfigFromJar(this.stream);
+	}
+	
+	public void loadConfigFromJar(String inputStream) 
 	{
 		this.lines.clear();
 		try
 		{
-			List<String> list = JavaUtil.getFileLines(this.stream);
+			List<String> list = JavaUtil.getFileLines(inputStream);
 			parseLines(list);
 		}
 		catch(Exception e)
@@ -165,6 +174,12 @@ public class ConfigLine {
 		}
 		if(!this.header.isEmpty())
 			list.add("\r\n" + this.headerWrappers[0] + JavaUtil.toWhiteSpaced("" + this.headerWrappers[1]) + this.header + this.headerWrappers[2]);
+		if(!this.footerComments.isEmpty())
+		{
+			list.add("");//force new line
+			for(Comment c : this.footerComments)
+				list.add(c.toString());
+		}
 		return list;
 	}
 	/**
@@ -240,10 +255,17 @@ public class ConfigLine {
 		}
 		for(Comment c : this.tmpComments)
 		{
+			if(c.index >= this.lines.size())
+			{
+				System.out.println("Adding footer comment:" + c);
+				this.footerComments.add(c);
+				continue;
+			}
 			ILine line = this.lines.get(c.index);
 			c.index = -1;
 			((ILineComment)line).addComment(c);
 		}
+		this.tmpComments.clear();
 		this.origin = this.toFileLines();
 	}
 	
@@ -392,7 +414,7 @@ public class ConfigLine {
 	{
 		StringBuilder builder = new StringBuilder();
 		for(String s : this.toFileLines())
-			builder.append(s);
+			builder.append(s + "\r\n");
 		return builder.toString();
 	}
 	
