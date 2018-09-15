@@ -45,6 +45,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class JavaUtil {
 	public static final String SPECIALCHARS = "~!@#$%^&*()_+`'-=/,.<>?\"{}[]:;|" + "\\";
+	public static final String uniqueSplitter = "\u00A9" + "#";
 	
 	/**
 	 * cast without loosing data and have a random negative number

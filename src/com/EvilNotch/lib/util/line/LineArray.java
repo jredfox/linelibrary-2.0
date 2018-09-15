@@ -8,8 +8,8 @@ import com.EvilNotch.lib.util.JavaUtil;
 public class LineArray extends LineMeta implements ILineHeadArray{
 
 	public List<Object> heads = new ArrayList<Object>();
-	public char lbracket = ' ';
-	public char rbracket = ' ';
+	public char lbracket = '[';
+	public char rbracket = ']';
 	
 	public LineArray(String str)
 	{
@@ -28,11 +28,8 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 				this.rbracket = str.charAt(str.length()-1);
 				str = str.substring(1, str.length()-1);
 			}
-			String[] toParse = str.split(",");
-			for(String s : toParse)
-			{
-				parseObject(s.trim());
-			}
+			String[] toParse = selectString(str, ',',q,this.lbracket,this.rbracket);
+			parseHead(toParse,this.heads);
 		}
 	}
 	@Override
@@ -76,10 +73,75 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 		}
 		return str;
 	}
-
-	public void parseObject(String str) 
+	/**
+	 * string filter more sophisticated then standard split. It filters out the char your looking for only if it's not in quotes or in brackets then splits them
+	 * skipping over any brackets
+	 */
+	public static String[] selectString(String input,char split,char q,char lbracket,char rbracket)
 	{
-		this.heads.add(parseWeight(str));
+		StringBuilder builder = new StringBuilder();
+		boolean insideQuote = false;
+		for(int i=0;i<input.length();i++)
+		{
+			char c = input.charAt(i);
+			if(c == q && c != ' ')
+				insideQuote = !insideQuote;
+			if(c == lbracket)
+			{
+				int rBracket = getRightBracket(i,input,lbracket,rbracket);
+				builder.append(input.substring(i,rBracket+1));
+				i = rBracket;
+				continue;//continue will force i++ thus you need the varible = to what it should be next
+			}
+			if(c == split && !insideQuote)
+			{
+				builder.append(JavaUtil.uniqueSplitter);
+			}
+			else
+			{
+				builder.append(c);
+			}
+		}
+		return builder.toString().split(JavaUtil.uniqueSplitter);
+	}
+	
+	public static int getRightBracket(int lindex,String str,char lbracket,char rbracket) 
+	{
+    	int lb = 0;
+    	for(int i=lindex;i<str.length();i++)
+    	{
+    		String ch = str.substring(i, i+1);
+			
+    		if(ch.equals("" + lbracket))
+    			lb++;
+    		else if(ch.equals("" + rbracket))
+    			lb--;
+    		if(lb == 0)
+    			return i;
+    	}
+		return -1;
+	}
+	/**
+	 * Recursively populate the array from string to actual objects
+	 */
+	public void parseHead(String[] str,List<Object> list) 
+	{
+		for(String s : str)
+		{
+			if(s.startsWith("["))
+			{
+				List<Object> newList = new ArrayList<Object>();
+				list.add(newList);
+				//step 1 remove braces
+				s = s.trim();
+				s = s.substring(1, s.length()-1);
+				//step 2 select string
+				String[] select = selectString(s, ',', this.quote,this.lbracket,this.rbracket);
+				this.parseHead(select, newList);
+			}
+			else
+				list.add(parseWeight(s));
+		}
 	}
 	/**
 	 * get the primitive object from the string
@@ -94,7 +156,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 		{
 			return new Entry(Boolean.parseBoolean(whitespaced));
 		}
-		if(JavaUtil.isStringNum(whitespaced))
+		else if(JavaUtil.isStringNum(whitespaced))
 		{
 			char idNum = ' ';
 			String lastChar = lowerCase.substring(size-1, size);
@@ -109,7 +171,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 			
 			//do general first
 			if(idNum == ' ' && !dflag){
-				obj = JavaUtil.castInt(Long.parseLong(num));//if greater then max value it equals max value
+				obj = Integer.parseInt(num);//if greater then max value it equals max value
 			}
 			//byte
 			else if(idNum == 'b'){
