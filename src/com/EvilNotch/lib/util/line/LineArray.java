@@ -13,12 +13,12 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	
 	public LineArray(String str)
 	{
-		this(str,':','"');
+		this(str,':','"',"<>");
 	}
 	
-	public LineArray(String str, char sep,char q) 
+	public LineArray(String str, char sep,char q,String metaBrackets) 
 	{
-		super(str, sep,q);
+		super(str, sep,q,metaBrackets);
 		if(str.contains("="))
 		{
 			str = JavaUtil.splitFirst(str,'=')[1].trim();
@@ -48,6 +48,23 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 		if(obj instanceof Entry)
 			obj = ((Entry)obj).obj;
 		return obj;
+	}
+	/**
+	 * set the lines value
+	 */
+	@Override
+	public void setHead(Object obj,int index) 
+	{
+		if(!(obj instanceof Entry))
+		{
+			if(obj instanceof String)
+				obj = new Entry(obj,'"');
+			else if(obj instanceof Number && !(obj instanceof Integer) && !(obj instanceof Double))
+				obj = new Entry(obj,JavaUtil.getNumId((Number)obj) );
+			else
+				obj = new Entry(obj);
+		}
+		this.heads.set(index, obj);
 	}
 	@Override
 	public int size()
@@ -203,7 +220,66 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 		return weight.contains("" + this.quote) ? new Entry(JavaUtil.parseQuotes(weight, 0, "" + this.quote),this.quote) : new Entry(weight.trim());
 	}
 	
-	public class Entry
+	/**
+	 * get the primitive object from the string
+	 */
+	public static Entry parseWeight(String weight,char quote) 
+	{
+		String whitespaced = JavaUtil.toWhiteSpaced(weight);
+		String lowerCase = whitespaced.toLowerCase();
+		int size = whitespaced.length();
+		
+		if(lowerCase.equals("true") || lowerCase.equals("false"))
+		{
+			return new Entry(Boolean.parseBoolean(whitespaced));
+		}
+		else if(JavaUtil.isStringNum(whitespaced))
+		{
+			char idNum = ' ';
+			String lastChar = lowerCase.substring(size-1, size);
+			boolean hasId = "bslfdi".contains(lastChar);
+			boolean flag = "BSLFDI".contains(whitespaced.substring(size-1, size));
+			boolean dflag = whitespaced.contains(".");
+			if(hasId)
+				idNum = lastChar.charAt(0);
+			
+			String num = hasId ? whitespaced.substring(0, whitespaced.length()-1) : whitespaced;
+			Object obj = null;
+			
+			//do general first
+			if(idNum == ' ' && !dflag){
+				obj = Integer.parseInt(num);//if greater then max value it equals max value
+			}
+			//byte
+			else if(idNum == 'b'){
+				obj = Byte.parseByte(num);
+			}
+			else if(idNum == 's'){
+				obj = Short.parseShort(num);
+			}
+			else if(idNum == 'l'){
+				obj = Long.parseLong(num);
+			}
+			else if(idNum == 'i'){
+				obj = Integer.parseInt(num);
+			}
+			else if(idNum == 'f'){
+				obj = Float.parseFloat(num);
+			}
+			else if(idNum == 'd'){
+				obj = Double.parseDouble(num);
+			}
+			else if(dflag){
+				obj = Double.parseDouble(num);
+			}
+			if(flag)
+				idNum = JavaUtil.toUpperCaseChar(idNum);
+			return  new Entry(obj,idNum);
+		}
+		return weight.contains("" + quote) ? new Entry(JavaUtil.parseQuotes(weight, 0, "" + quote),quote) : new Entry(weight.trim());
+	}
+	
+	public static class Entry
 	{
 		public Object obj;
 		public char id;
@@ -232,23 +308,6 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 			}
 			return this.obj.toString();
 		}
-	}
-	/**
-	 * set the lines value
-	 */
-	@Override
-	public void setHead(Object obj,int index) 
-	{
-		if(!(obj instanceof Entry))
-		{
-			if(obj instanceof String)
-				obj = new Entry(obj,'"');
-			else if(obj instanceof Number && !(obj instanceof Integer) && !(obj instanceof Double))
-				obj = new Entry(obj,JavaUtil.getNumId((Number)obj) );
-			else
-				obj = new Entry(obj);
-		}
-		this.heads.set(index, obj);
 	}
 	
 }

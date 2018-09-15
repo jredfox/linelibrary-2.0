@@ -67,7 +67,7 @@ public class Line implements ILineSeperation,ILineComment{
 		String id = this.modid;
 		if(this.name != null)
 		{
-			id += ":" + this.name;
+			id += this.seperator + this.name;
 		}
 		return id;
 	}
