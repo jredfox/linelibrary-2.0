@@ -11,6 +11,7 @@ public class ConfigLang extends ConfigLine{
 	{
 		super(f);
 		this.commentsEnabled = false;
+		this.headerComments.clear();//to ensure another mod isn't stupid trying to add comments to a file which doesn't allow any comments not even from the coder
 	}
 	
 	@Override

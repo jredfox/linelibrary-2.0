@@ -82,16 +82,17 @@ public class ConfigLine {
 	}
 	public ConfigLine(File f,String header,char commentStart,List<String> comments)
 	{
-		this(f,header,commentStart,comments,"</>".toCharArray(),':','"',"<>".toCharArray(),"[]".toCharArray());
+		this(f,header,true,commentStart,comments,"</>".toCharArray(),':','"',"<>".toCharArray(),"[]".toCharArray());
 	}
-	public ConfigLine(File f,String header,char commentStart,List<String> comments,char[] headerWrappers,char sep,char q,char[] metaBrackets,char[] arrBrackets)
+	public ConfigLine(File f,String header,boolean allowComments,char commentStart,List<String> comments,char[] headerWrappers,char sep,char q,char[] metaBrackets,char[] arrBrackets)
 	{
 		this.file = f;
+		this.commentsEnabled = allowComments;
 		if(header != null)
 			this.header = header;//non null values accepted
 		this.commentStart = commentStart;
 		for(String s : comments)
-			this.addHeaderComment(s);
+			this.addHeaderCommentAdmin(s);//adds comments regardless whether or not comments are enabled
 		this.sep = sep;
 		this.quote = q;
 		this.headerWrappers = headerWrappers;
@@ -481,6 +482,13 @@ public class ConfigLine {
 	{
 		if(!this.commentsEnabled)
 			return;
+		this.headerComments.add(new Comment(this.commentStart,comment,-1));
+	}
+	/**
+	 * used for constructor calls doesn't get used outside of the constructor normally
+	 */
+	protected void addHeaderCommentAdmin(String comment)
+	{
 		this.headerComments.add(new Comment(this.commentStart,comment,-1));
 	}
 	
