@@ -14,19 +14,20 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	
 	public LineArray(String str)
 	{
-		this(str,':','"',"<>");
+		this(str,':','"',"<>","[]".toCharArray());
 	}
 	
-	public LineArray(String str, char sep,char q,String metaBrackets) 
+	public LineArray(String str, char sep,char q,String metaBrackets,char[] brackets) 
 	{
 		super(str, sep,q,metaBrackets);
 		if(str.contains("="))
 		{
 			str = JavaUtil.splitFirst(str,'=')[1].trim();
-			if(str.startsWith("(") || str.startsWith("["))
+			
+			if(str.startsWith("" + brackets[0]))
 			{
-				this.lbracket = str.charAt(0);
-				this.rbracket = str.charAt(str.length()-1);
+				this.lbracket = brackets[0];
+				this.rbracket = brackets[1];
 				str = str.substring(1, str.length()-1);
 			}
 			

@@ -48,6 +48,19 @@ public class ConfigLine {
 	 */
 	public String header = "";
 	public char[] headerWrappers = new char[]{'<','/','>'};
+	/**
+	 * seperator for all the lines that use them
+	 */
+	public char sep = ':';
+	public char quote = '"';
+	/**
+	 * brackets for metadata of LineMeta
+	 */
+	public char[] metaBrackets = new char[]{'<','>'};
+	/**
+	 * brackets for LineArray defaults
+	 */
+	public char[] arrBrackets = new char[]{'[',']'};
 	
 	/**
 	 * call this constructor if your reading from a jar/zip 
@@ -62,6 +75,22 @@ public class ConfigLine {
 	public ConfigLine(File f)
 	{
 		this.file = f;
+	}
+	public ConfigLine(File f,String header,char commentStart,List<String> comments)
+	{
+		this(f,header,comments,"</>".toCharArray(),commentStart,':','"',"<>".toCharArray(),"[]".toCharArray());
+	}
+	public ConfigLine(File f,String header,List<String> comments,char[] headerWrappers,char commentStart,char sep,char q,char[] metaBrackets,char[] arrBrackets)
+	{
+		this.file = f;
+		if(header != null)
+			this.header = header;//non null values accepted
+		this.commentStart = commentStart;
+		this.sep = sep;
+		this.quote = q;
+		this.headerWrappers = headerWrappers;
+		this.metaBrackets = metaBrackets;
+		this.arrBrackets = arrBrackets;
 	}
 	
 	public void loadConfig()
@@ -302,12 +331,12 @@ public class ConfigLine {
 	{
 		if(str.contains("="))
 		{
-			return new LineArray(str);
+			return new LineArray(str,this.sep,this.quote,new String(this.metaBrackets),this.arrBrackets);
 		}
-		else if(str.contains("<") || str.contains("{"))
-			return new LineMeta(str);
+		else if(str.contains("" + this.metaBrackets[0]) || str.contains("{"))
+			return new LineMeta(str,this.sep,this.quote,new String(this.metaBrackets));
 
-		return new Line(str);
+		return new Line(str,this.sep,this.quote);
 	}
 	/**
 	 * add a line if and only if it doesn't exist
@@ -413,9 +442,65 @@ public class ConfigLine {
 		else
 			this.appendLine(line);
 	}
+	/**
+	 * add a comment to a line
+	 */
+	public void addLineComment(ILine line,String comment)
+	{
+		if(!this.containsLine(line,this.checkMetaByDefault() ))
+			return;
+		line = this.getUpdatedLine(line);
+		ILineComment comments = (ILineComment)line;
+		comments.addComment(new Comment(this.commentStart,comment,-1));
+	}
+	/**
+	 * add a comment to the top of the file before the lines
+	 * @param comment
+	 */
+	public void addHeaderComment(String comment)
+	{
+		this.headerComments.add(new Comment(this.commentStart,comment,-1));
+	}
+	
+	/**
+	 * add comment below all the lines and header if any
+	 * @param comment
+	 */
+	public void addFooterComment(String comment)
+	{
+		this.footerComments.add(new Comment(this.commentStart,comment,-1));
+	}
+	/**
+	 * remove a comment below file lines
+	 * @param comment
+	 */
+	public void removeFooterComment(String comment)
+	{
+		this.footerComments.remove(new Comment(this.commentStart,comment,-1));
+	}
+	/**
+	 * remove a comment at above file lines
+	 * @param comment
+	 */
+	public void removeHeaderComment(String comment)
+	{
+		this.headerComments.remove(new Comment(this.commentStart,comment,-1));
+	}
+	/**
+	 * remove a comment from a line
+	 */
+	public void removeLineComment(ILine line,String comment)
+	{
+		if(!this.containsLine(line,this.checkMetaByDefault() ))
+			return;
+		line = this.getUpdatedLine(line);
+		ILineComment comments = (ILineComment)line;
+		comments.removeComment(new Comment(this.commentStart,comment,-1));
+	}
 	
 	public List<IComment> getCommentsFromLine(ILine line) 
 	{
+		line = this.getUpdatedLine(line);
 		if(line instanceof ILineComment)
 		{
 			return ((ILineComment)line).getComments();
