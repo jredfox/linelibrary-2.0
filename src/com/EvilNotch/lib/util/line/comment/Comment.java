@@ -35,6 +35,14 @@ public class Comment implements ICommentAttatch{
 	public boolean isAttatched() {
 		return this.attatched;
 	}
+	@Override
+	public int getTmpIndex() {
+		return this.index;
+	}
+	@Override
+	public void setTmpIndex(int i) {
+		this.index = i;
+	}
 	
 	@Override
 	public String toString()
@@ -48,13 +56,5 @@ public class Comment implements ICommentAttatch{
 			return false;
 		Comment c = (Comment)obj;
 		return this.toString().equals(c.toString());
-	}
-	@Override
-	public int getTmpIndex() {
-		return this.index;
-	}
-	@Override
-	public void setTmpIndex(int i) {
-		this.index = i;
 	}
 }

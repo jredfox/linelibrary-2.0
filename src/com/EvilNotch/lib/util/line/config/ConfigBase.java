@@ -9,7 +9,6 @@ import java.util.Random;
 
 import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.ILine;
-import com.EvilNotch.lib.util.line.ILineComment;
 import com.EvilNotch.lib.util.line.ILineMeta;
 import com.EvilNotch.lib.util.line.Line;
 import com.EvilNotch.lib.util.line.LineArray;
@@ -17,6 +16,7 @@ import com.EvilNotch.lib.util.line.LineMeta;
 import com.EvilNotch.lib.util.line.comment.Comment;
 import com.EvilNotch.lib.util.line.comment.IComment;
 import com.EvilNotch.lib.util.line.comment.ICommentAttatch;
+import com.EvilNotch.lib.util.line.comment.ICommentStorage;
 /**
  * this is the class you should use for custom ILines
  * @author jredfox
@@ -188,9 +188,9 @@ public abstract class ConfigBase {
 		
 		for(ILine l : this.lines)
 		{
-			if(l instanceof ILineComment && this.commentsEnabled)
+			if(l instanceof ICommentStorage && this.commentsEnabled)
 			{
-				ILineComment line = (ILineComment)l;
+				ICommentStorage line = (ICommentStorage)l;
 				String attatched = "";
 				for(ICommentAttatch c : line.getComments())
 				{
@@ -301,7 +301,7 @@ public abstract class ConfigBase {
 				}
 				ILine line = this.lines.get(index);
 				c.setTmpIndex(-1);
-				((ILineComment)line).addComment(c);
+				((ICommentStorage)line).addComment(c);
 			}
 			this.tmpComments.clear();
 		}
@@ -417,11 +417,11 @@ public abstract class ConfigBase {
 	
 	public void preserveLineComments(ILine newLine,ILine oldLine)
 	{
-		if(!(newLine instanceof ILineComment) || !(oldLine instanceof ILineComment))
+		if(!(newLine instanceof ICommentStorage) || !(oldLine instanceof ICommentStorage))
 			return;
-		this.preserveLineComments((ILineComment)newLine,(ILineComment)oldLine);
+		this.preserveLineComments((ICommentStorage)newLine,(ICommentStorage)oldLine);
 	}
-	public void preserveLineComments(ILineComment newLine, ILineComment oldLine) 
+	public void preserveLineComments(ICommentStorage newLine, ICommentStorage oldLine) 
 	{
 		List<ICommentAttatch> comments = newLine.getComments();
 		for(ICommentAttatch c : oldLine.getComments())
@@ -452,7 +452,7 @@ public abstract class ConfigBase {
 		if(!this.containsLine(line,this.checkMetaByDefault() ))
 			return;
 		line = this.getUpdatedLine(line);
-		ILineComment comments = (ILineComment)line;
+		ICommentStorage comments = (ICommentStorage)line;
 		comments.addComment(new Comment(this.commentStart,comment,-1));
 	}
 	/**
@@ -513,16 +513,16 @@ public abstract class ConfigBase {
 		if(!this.containsLine(line,this.checkMetaByDefault() ))
 			return;
 		line = this.getUpdatedLine(line);
-		ILineComment comments = (ILineComment)line;
+		ICommentStorage comments = (ICommentStorage)line;
 		comments.removeComment(new Comment(this.commentStart,comment,-1));
 	}
 	
 	public List<ICommentAttatch> getCommentsFromLine(ILine line) 
 	{
 		line = this.getUpdatedLine(line);
-		if(line instanceof ILineComment)
+		if(line instanceof ICommentStorage)
 		{
-			return ((ILineComment)line).getComments();
+			return ((ICommentStorage)line).getComments();
 		}
 		return null;
 	}

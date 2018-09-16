@@ -6,6 +6,7 @@ import java.util.List;
 import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.comment.IComment;
 import com.EvilNotch.lib.util.line.comment.ICommentAttatch;
+import com.EvilNotch.lib.util.line.comment.ICommentStorage;
 
 import net.minecraft.util.ResourceLocation;
 

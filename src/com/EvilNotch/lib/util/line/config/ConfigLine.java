@@ -9,7 +9,6 @@ import java.util.Random;
 
 import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.ILine;
-import com.EvilNotch.lib.util.line.ILineComment;
 import com.EvilNotch.lib.util.line.ILineMeta;
 import com.EvilNotch.lib.util.line.Line;
 import com.EvilNotch.lib.util.line.LineArray;
