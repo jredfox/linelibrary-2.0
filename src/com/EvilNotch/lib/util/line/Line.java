@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.EvilNotch.lib.util.JavaUtil;
-import com.EvilNotch.lib.util.line.config.Comment;
-import com.EvilNotch.lib.util.line.config.IComment;
+import com.EvilNotch.lib.util.line.comment.Comment;
+import com.EvilNotch.lib.util.line.comment.IComment;
 
 public class Line implements ILineSeperation,ILineComment{
 	
@@ -37,16 +37,16 @@ public class Line implements ILineSeperation,ILineComment{
 		}
 		
 		String[] parts = JavaUtil.splitFirst(str, sep);
-		this.modid = parts[0].trim();
-		
-		//parse the name
-		if(parts.length == 2)
+		if(this.hasQuote)
 		{
-			if(this.hasQuote)
-			{
-				this.name = parts[1].trim();
-			}
-			else
+			this.modid = parts[0];
+			this.name = parts[1];
+		}
+		else
+		{
+			this.modid = parts[0].trim();
+			
+			if(parts.length == 2)
 			{
 				StringBuilder builder = new StringBuilder();
 				String restOfLine = parts[1].trim();

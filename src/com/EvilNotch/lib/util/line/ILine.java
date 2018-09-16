@@ -1,7 +1,11 @@
 package com.EvilNotch.lib.util.line;
 
 import net.minecraft.util.ResourceLocation;
-
+/**
+ * the base for all line objects only this is required for a line object
+ * @author jredfox
+ *
+ */
 public interface ILine extends Comparable<ILine>{
 	
 	public static final String version = "2.0";

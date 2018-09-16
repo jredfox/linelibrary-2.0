@@ -1046,6 +1046,8 @@ public class JavaUtil {
 	{
 		if(index == -1)
 			return "";
+		char lquote = q.charAt(0);
+		
 		String strid = "";
 		int quote = 0;
 		for(int i=index;i<s.length();i++)

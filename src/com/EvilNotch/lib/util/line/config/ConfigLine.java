@@ -14,6 +14,8 @@ import com.EvilNotch.lib.util.line.ILineMeta;
 import com.EvilNotch.lib.util.line.Line;
 import com.EvilNotch.lib.util.line.LineArray;
 import com.EvilNotch.lib.util.line.LineMeta;
+import com.EvilNotch.lib.util.line.comment.Comment;
+import com.EvilNotch.lib.util.line.comment.IComment;
 
 public class ConfigLine {
 	

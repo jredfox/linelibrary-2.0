@@ -1,7 +1,11 @@
 package com.EvilNotch.lib.util.line;
 
 import java.util.List;
-
+/**
+ * does your head have a line implement this
+ * @author jredfox
+ *
+ */
 public interface ILineHead extends ILine{
 	
 	public Object getHead();

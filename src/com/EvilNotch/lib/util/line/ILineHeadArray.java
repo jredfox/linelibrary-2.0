@@ -1,7 +1,11 @@
 package com.EvilNotch.lib.util.line;
 
 import java.util.List;
-
+/**
+ * used in LineArray for multi index heads
+ * @author jredfox
+ *
+ */
 public interface ILineHeadArray extends ILineHead{
 	
 	public List<Object> getHeads();

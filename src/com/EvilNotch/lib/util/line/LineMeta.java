@@ -1,6 +1,7 @@
 package com.EvilNotch.lib.util.line;
 
 import com.EvilNotch.lib.util.JavaUtil;
+import com.EvilNotch.lib.util.line.util.LineUtil;
 
 public class LineMeta extends Line implements ILineMeta{
 
@@ -9,7 +10,7 @@ public class LineMeta extends Line implements ILineMeta{
 	 */
 	public String meta = null;
 	/**
-	 * int version when it is a number
+	 * primitive version when it is a number
 	 */
 	public Object metaData;
 	/**
@@ -51,7 +52,7 @@ public class LineMeta extends Line implements ILineMeta{
 		}
 		else if(JavaUtil.isStringNum(this.meta))
 		{
-			LineArray.Entry arr = LineArray.parseWeight(this.meta,this.quote);
+			LineArray.Entry arr = LineUtil.parseWeight(this.meta,this.quote);
 			this.metaData = arr.obj;
 			this.metaDataId = arr.id;
 		}
