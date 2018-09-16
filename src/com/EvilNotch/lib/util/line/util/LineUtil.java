@@ -8,7 +8,10 @@ import com.EvilNotch.lib.util.line.LineMeta;
 import com.EvilNotch.lib.util.line.LineArray.Entry;
 
 public class LineUtil {
-	
+	/**
+	 * use getLinefromString(String str,char sep,char quote,char[] metaBrackets,char[] arrBrackets) instead
+	 */
+	@Deprecated
 	public static ILine getLineFromString(String str)
 	{
 		if(str.contains("="))
