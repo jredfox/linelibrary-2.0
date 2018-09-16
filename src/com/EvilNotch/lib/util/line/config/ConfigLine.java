@@ -149,7 +149,7 @@ public class ConfigLine {
 	public List<String> toFileLines() 
 	{
 		List<String> list = new ArrayList<String>();
-		for(Comment c : this.headerComments)
+		for(IComment c : this.headerComments)
 			list.add(c.toString());
 		if(!this.headerComments.isEmpty())
 			list.add("");
@@ -179,7 +179,7 @@ public class ConfigLine {
 		if(!this.footerComments.isEmpty())
 		{
 			list.add("");//force new line
-			for(Comment c : this.footerComments)
+			for(IComment c : this.footerComments)
 				list.add(c.toString());
 		}
 		return list;
@@ -228,7 +228,7 @@ public class ConfigLine {
 		{
 			str = str.trim();
 			String whitespaced = JavaUtil.toWhiteSpaced(str);
-			if(whitespaced.equals("") || whitespaced.startsWith("<"))
+			if(whitespaced.equals("") || whitespaced.startsWith("" + this.headerWrappers[0]) && whitespaced.endsWith("" + this.headerWrappers[2]))
 			{
 				passedHeader = true;
 				continue;
@@ -328,6 +328,22 @@ public class ConfigLine {
 		return this.getLineIndex(c, compareMeta) != -1;
 	}
 	/**
+	 * get the updated line from generated one
+	 */
+	public ILine getUpdatedLine(ILine l){
+		return this.getUpdatedLine(l, this.checkMetaByDefault());
+	}
+	/**
+	 * get the updated line from generated one
+	 */
+	public ILine getUpdatedLine(ILine l,boolean compareMeta)
+	{
+		int index = this.getLineIndex(l, compareMeta);
+		if(index != -1)
+			return this.lines.get(index);
+		return l;
+	}
+	/**
 	 * get the line as an index in the file you can't remove meta lines without them
 	 * @return -1 if doesn't exist
 	 */
@@ -381,7 +397,7 @@ public class ConfigLine {
 		List<IComment> comments = newLine.getComments();
 		for(IComment c : oldLine.getComments())
 			if(!comments.contains(c))
-				comments.add(c);
+				newLine.addComment(c);
 	}
 	/**
 	 * set a line at it's index if doesn't exist add a line

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.EvilNotch.lib.util.JavaUtil;
+import com.EvilNotch.lib.util.line.util.LineUtil;
 
 public class LineArray extends LineMeta implements ILineHeadArray{
 
@@ -29,7 +30,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 				str = str.substring(1, str.length()-1);
 			}
 			
-			String[] toParse = selectString(str, ',',q,this.lbracket,this.rbracket);
+			String[] toParse = LineUtil.selectString(str, ',',q,this.lbracket,this.rbracket);
 			parseHead(toParse,this.heads);
 		}
 	}
@@ -92,54 +93,6 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 		return str;
 	}
 	/**
-	 * string filter more sophisticated then standard split. It filters out the char your looking for only if it's not in quotes or in brackets then splits them
-	 * skipping over any brackets
-	 */
-	public static String[] selectString(String input,char split,char q,char lbracket,char rbracket)
-	{
-		StringBuilder builder = new StringBuilder();
-		boolean insideQuote = false;
-		for(int i=0;i<input.length();i++)
-		{
-			char c = input.charAt(i);
-			if(c == q && c != ' ')
-				insideQuote = !insideQuote;
-			if(c == lbracket && c != ' ')
-			{
-				int rBracket = getRightBracket(i,input,lbracket,rbracket);
-				builder.append(input.substring(i,rBracket+1));
-				i = rBracket;
-				continue;//continue will force i++ thus you need the varible = to what it should be next
-			}
-			if(c == split && !insideQuote)
-			{
-				builder.append(JavaUtil.uniqueSplitter);
-			}
-			else
-			{
-				builder.append(c);
-			}
-		}
-		return builder.toString().split(JavaUtil.uniqueSplitter);
-	}
-	
-	public static int getRightBracket(int lindex,String str,char lbracket,char rbracket) 
-	{
-    	int lb = 0;
-    	for(int i=lindex;i<str.length();i++)
-    	{
-    		String ch = str.substring(i, i+1);
-			
-    		if(ch.equals("" + lbracket))
-    			lb++;
-    		else if(ch.equals("" + rbracket))
-    			lb--;
-    		if(lb == 0)
-    			return i;
-    	}
-		return -1;
-	}
-	/**
 	 * Recursively populate the array from string to actual objects
 	 */
 	public void parseHead(String[] str,List<Object> list) 
@@ -154,7 +107,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 				s = s.trim();
 				s = s.substring(1, s.length()-1);
 				//step 2 select string
-				String[] select = selectString(s, ',', this.quote,this.lbracket,this.rbracket);
+				String[] select = LineUtil.selectString(s, ',', this.quote,this.lbracket,this.rbracket);
 				this.parseHead(select, newList);
 			}
 			else
@@ -166,58 +119,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	 */
 	public Object parseWeight(String weight) 
 	{
-		String whitespaced = JavaUtil.toWhiteSpaced(weight);
-		String lowerCase = whitespaced.toLowerCase();
-		int size = whitespaced.length();
-		
-		if(lowerCase.equals("true") || lowerCase.equals("false"))
-		{
-			return new Entry(Boolean.parseBoolean(whitespaced));
-		}
-		else if(JavaUtil.isStringNum(whitespaced))
-		{
-			char idNum = ' ';
-			String lastChar = lowerCase.substring(size-1, size);
-			boolean hasId = "bslfdi".contains(lastChar);
-			boolean flag = "BSLFDI".contains(whitespaced.substring(size-1, size));
-			boolean dflag = whitespaced.contains(".");
-			if(hasId)
-				idNum = lastChar.charAt(0);
-			
-			String num = hasId ? whitespaced.substring(0, whitespaced.length()-1) : whitespaced;
-			Object obj = null;
-			
-			//do general first
-			if(idNum == ' ' && !dflag){
-				obj = Integer.parseInt(num);//if greater then max value it equals max value
-			}
-			//byte
-			else if(idNum == 'b'){
-				obj = Byte.parseByte(num);
-			}
-			else if(idNum == 's'){
-				obj = Short.parseShort(num);
-			}
-			else if(idNum == 'l'){
-				obj = Long.parseLong(num);
-			}
-			else if(idNum == 'i'){
-				obj = Integer.parseInt(num);
-			}
-			else if(idNum == 'f'){
-				obj = Float.parseFloat(num);
-			}
-			else if(idNum == 'd'){
-				obj = Double.parseDouble(num);
-			}
-			else if(dflag){
-				obj = Double.parseDouble(num);
-			}
-			if(flag)
-				idNum = JavaUtil.toUpperCaseChar(idNum);
-			return  new Entry(obj,idNum);
-		}
-		return weight.contains("" + this.quote) ? new Entry(JavaUtil.parseQuotes(weight, 0, "" + this.quote),this.quote) : new Entry(weight.trim());
+		return LineUtil.parseWeight(weight, this.quote);
 	}
 	
 	public static class Entry

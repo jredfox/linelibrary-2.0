@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.EvilNotch.lib.util.JavaUtil;
-import com.EvilNotch.lib.util.line.comment.Comment;
 import com.EvilNotch.lib.util.line.comment.IComment;
+
+import net.minecraft.util.ResourceLocation;
 
 public class Line implements ILineSeperation,ILineComment{
 	
@@ -132,6 +133,14 @@ public class Line implements ILineSeperation,ILineComment{
 	@Override
 	public List<IComment> getComments() {
 		return this.comments;
+	}
+	
+	@Override
+	public ResourceLocation getResourceLocation()
+	{
+		if(this.name == null)
+			return new ResourceLocation("minecraft:" + this.modid);
+		return new ResourceLocation(this.getId());
 	}
 
 }

@@ -11,7 +11,6 @@ public class MainJava {
 	
 	public static void main(String[] args)
 	{
-		Line l = new Line("Zombie");
 		/*ConfigLine cfg = new ConfigLine(new File("C:/Users/jredfox/Desktop/minecraft.txt"));
 		cfg.header = "DungeonTweaks";
 		sw.start();
@@ -19,9 +18,8 @@ public class MainJava {
 		cfg.alphabitize();
 //		System.out.println(cfg);
 		cfg.saveConfig(false);*/
-		System.out.println(l);
-		LineArray line = new LineArray("%modid@block% $1$ = %this is a string%",'@','%',"$$");
-		
+//		LineArray line = new LineArray("%modid@block% $1^ = %this is a string%",'@','%',"$^");
+		System.out.println("a" + System.getProperty("line.separator") + "b");
 	}
 
 }

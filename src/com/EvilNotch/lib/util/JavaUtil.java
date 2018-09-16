@@ -1047,6 +1047,7 @@ public class JavaUtil {
 		if(index == -1)
 			return "";
 		char lquote = q.charAt(0);
+		char rquote = q.length() > 1 ? q.charAt(1) : lquote;
 		
 		String strid = "";
 		int quote = 0;
@@ -1054,8 +1055,8 @@ public class JavaUtil {
 		{
 			if(quote == 2)
 				break; //if end of parsing object stop loop and return getParts(strid,":");
-			String tocompare = s.substring(i,i+1);
-			boolean contains = q.contains(tocompare);
+			char tocompare = s.charAt(i);
+			boolean contains = tocompare == lquote && quote == 0 || tocompare == rquote;
 			
 			if(contains)
 				quote++;

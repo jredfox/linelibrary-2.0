@@ -8,11 +8,11 @@ import com.EvilNotch.lib.util.line.util.LineUtil;
 
 public class LineDynamicLogic implements ILine{
 
-	public HashMap<Integer,List<ILine>> lines = new HashMap();
+	public HashMap<Integer,List<ILine>> lines = new HashMap<Integer,List<ILine>>();
 	
 	public LineDynamicLogic(String str)
 	{
-		String[] ores = str.split("=");
+		String[] ores = str.split("||");
 		for(int oreIndex=0;oreIndex<ores.length;oreIndex++)
 		{
 			String section = ores[oreIndex];

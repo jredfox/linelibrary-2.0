@@ -79,4 +79,53 @@ public class LineUtil {
 		}
 		return weight.contains("" + quote) ? new Entry(JavaUtil.parseQuotes(weight, 0, "" + quote),quote) : new Entry(weight.trim());
 	}
+	
+	/**
+	 * string filter more sophisticated then standard split. It filters out the char your looking for only if it's not in quotes or in brackets then splits them
+	 * skipping over any brackets
+	 */
+	public static String[] selectString(String input,char split,char q,char lbracket,char rbracket)
+	{
+		StringBuilder builder = new StringBuilder();
+		boolean insideQuote = false;
+		for(int i=0;i<input.length();i++)
+		{
+			char c = input.charAt(i);
+			if(c == q && c != ' ')
+				insideQuote = !insideQuote;
+			if(c == lbracket && c != ' ')
+			{
+				int rBracket = getRightBracket(i,input,lbracket,rbracket);
+				builder.append(input.substring(i,rBracket+1));
+				i = rBracket;
+				continue;//continue will force i++ thus you need the varible = to what it should be next
+			}
+			if(c == split && !insideQuote)
+			{
+				builder.append(JavaUtil.uniqueSplitter);
+			}
+			else
+			{
+				builder.append(c);
+			}
+		}
+		return builder.toString().split(JavaUtil.uniqueSplitter);
+	}
+	
+	public static int getRightBracket(int lindex,String str,char lbracket,char rbracket) 
+	{
+    	int lb = 0;
+    	for(int i=lindex;i<str.length();i++)
+    	{
+    		String ch = str.substring(i, i+1);
+			
+    		if(ch.equals("" + lbracket))
+    			lb++;
+    		else if(ch.equals("" + rbracket))
+    			lb--;
+    		if(lb == 0)
+    			return i;
+    	}
+		return -1;
+	}
 }
