@@ -16,6 +16,7 @@ import com.EvilNotch.lib.util.line.LineArray;
 import com.EvilNotch.lib.util.line.LineMeta;
 import com.EvilNotch.lib.util.line.comment.Comment;
 import com.EvilNotch.lib.util.line.comment.IComment;
+import com.EvilNotch.lib.util.line.comment.ICommentAttatch;
 /**
  * this is the class you should use for custom ILines
  * @author jredfox
@@ -41,15 +42,15 @@ public abstract class ConfigBase {
 	/**
 	 * comments above the header
 	 */
-	public List<Comment> headerComments = new ArrayList<Comment>();
+	public List<IComment> headerComments = new ArrayList<IComment>();
 	/**
 	 * a list of comments that starts below the ffile
 	 */
-	public List<Comment> footerComments = new ArrayList<Comment>();
+	public List<IComment> footerComments = new ArrayList<IComment>();
 	/**
 	 * temporary storage for comments during parsing
 	 */
-	protected List<Comment> tmpComments = new ArrayList<Comment>();
+	protected List<ICommentAttatch> tmpComments = new ArrayList<ICommentAttatch>();
 	/**
 	 * fancy header for example "<"DungeonMobs">"
 	 */
@@ -191,7 +192,7 @@ public abstract class ConfigBase {
 			{
 				ILineComment line = (ILineComment)l;
 				String attatched = "";
-				for(IComment c : line.getComments())
+				for(ICommentAttatch c : line.getComments())
 				{
 					if(!c.isAttatched())
 						list.add(c.toString());
@@ -290,15 +291,16 @@ public abstract class ConfigBase {
 		}
 		if(this.commentsEnabled)
 		{
-			for(Comment c : this.tmpComments)
+			for(ICommentAttatch c : this.tmpComments)
 			{
-				if(c.index == this.lines.size())
+				int index = c.getTmpIndex();
+				if(index == this.lines.size())
 				{
 					this.footerComments.add(c);
 					continue;
 				}
-				ILine line = this.lines.get(c.index);
-				c.index = -1;
+				ILine line = this.lines.get(index);
+				c.setTmpIndex(-1);
 				((ILineComment)line).addComment(c);
 			}
 			this.tmpComments.clear();
@@ -421,8 +423,8 @@ public abstract class ConfigBase {
 	}
 	public void preserveLineComments(ILineComment newLine, ILineComment oldLine) 
 	{
-		List<IComment> comments = newLine.getComments();
-		for(IComment c : oldLine.getComments())
+		List<ICommentAttatch> comments = newLine.getComments();
+		for(ICommentAttatch c : oldLine.getComments())
 			if(!comments.contains(c))
 				newLine.addComment(c);
 	}
@@ -515,7 +517,7 @@ public abstract class ConfigBase {
 		comments.removeComment(new Comment(this.commentStart,comment,-1));
 	}
 	
-	public List<IComment> getCommentsFromLine(ILine line) 
+	public List<ICommentAttatch> getCommentsFromLine(ILine line) 
 	{
 		line = this.getUpdatedLine(line);
 		if(line instanceof ILineComment)

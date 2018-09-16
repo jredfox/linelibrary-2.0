@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.comment.IComment;
+import com.EvilNotch.lib.util.line.comment.ICommentAttatch;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -19,7 +20,7 @@ public class Line implements ILineSeperation,ILineComment{
 	/**
 	 * list of comments attached to the list
 	 */
-	public List<IComment> comments = new ArrayList<IComment>();
+	public List<ICommentAttatch> comments = new ArrayList<ICommentAttatch>();
 	
 	public Line(String str)
 	{
@@ -121,17 +122,17 @@ public class Line implements ILineSeperation,ILineComment{
 	}
 
 	@Override
-	public void addComment(IComment c) {
+	public void addComment(ICommentAttatch c) {
 		this.comments.add(c);
 	}
 
 	@Override
-	public void removeComment(IComment c) {
+	public void removeComment(ICommentAttatch c) {
 		this.comments.remove(c);
 	}
 
 	@Override
-	public List<IComment> getComments() {
+	public List<ICommentAttatch> getComments() {
 		return this.comments;
 	}
 	

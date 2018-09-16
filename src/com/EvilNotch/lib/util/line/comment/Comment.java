@@ -1,6 +1,6 @@
 package com.EvilNotch.lib.util.line.comment;
 
-public class Comment implements IComment{
+public class Comment implements ICommentAttatch{
 	
 	public char cStart;
 	public String comment;
@@ -48,5 +48,13 @@ public class Comment implements IComment{
 			return false;
 		Comment c = (Comment)obj;
 		return this.toString().equals(c.toString());
+	}
+	@Override
+	public int getTmpIndex() {
+		return this.index;
+	}
+	@Override
+	public void setTmpIndex(int i) {
+		this.index = i;
 	}
 }

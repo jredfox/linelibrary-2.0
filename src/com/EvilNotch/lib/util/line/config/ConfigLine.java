@@ -17,7 +17,7 @@ import com.EvilNotch.lib.util.line.LineMeta;
 import com.EvilNotch.lib.util.line.comment.Comment;
 import com.EvilNotch.lib.util.line.comment.IComment;
 
-public class ConfigLine extends  ConfigBase{
+public class ConfigLine extends ConfigBase{
 	
 	/**
 	 * seperator for all the lines that use them
@@ -33,6 +33,11 @@ public class ConfigLine extends  ConfigBase{
 	 */
 	public char[] arrBrackets = new char[]{'[',']'};
 	
+	public ConfigLine(String inputStream,File output)
+	{
+		super(inputStream,output);
+	}
+	
 	public ConfigLine(File f) 
 	{
 		super(f);
@@ -44,16 +49,9 @@ public class ConfigLine extends  ConfigBase{
 	}
 	public ConfigLine(File f,String header,boolean allowComments,char commentStart,List<String> comments,char[] headerWrappers,char sep,char q,char[] metaBrackets,char[] arrBrackets)
 	{
-		super(f);
-		this.commentsEnabled = allowComments;
-		if(header != null)
-			this.header = header;//non null values accepted
-		this.commentStart = commentStart;
-		for(String s : comments)
-			this.addHeaderCommentAdmin(s);//adds comments regardless whether or not comments are enabled
+		super(f,header,allowComments,commentStart,comments,headerWrappers);
 		this.sep = sep;
 		this.quote = q;
-		this.headerWrappers = headerWrappers;
 		this.metaBrackets = metaBrackets;
 		this.arrBrackets = arrBrackets;
 	}
