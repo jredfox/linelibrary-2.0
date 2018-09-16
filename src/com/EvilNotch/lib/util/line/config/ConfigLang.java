@@ -10,6 +10,7 @@ public class ConfigLang extends ConfigLine{
 	public ConfigLang(File f) 
 	{
 		super(f);
+		this.commentsEnabled = false;
 	}
 	
 	@Override

@@ -28,6 +28,10 @@ public class ConfigLine {
 	 */
 	public char commentStart = '#';
 	/**
+	 * this tells whether or not config comments get parsed saved added or written to the disk
+	 */
+	public boolean commentsEnabled = true;
+	/**
 	 * this is the last text file read when parsing also determines if config can save to disk saves ms
 	 */
 	public List<String> origin = new ArrayList<String>();
@@ -94,7 +98,10 @@ public class ConfigLine {
 		this.metaBrackets = metaBrackets;
 		this.arrBrackets = arrBrackets;
 	}
-	
+	/**
+	 * call this to load the config from the disk manual 
+	 * call after constructing is now called as this is more proper
+	 */
 	public void loadConfig()
 	{
 		this.lines.clear();
@@ -108,7 +115,9 @@ public class ConfigLine {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * if you used the jar constructor call this instead of loadConfig() regular
+	 */
 	public void loadConfigFromJar(){
 		this.loadConfigFromJar(this.stream);
 	}
@@ -189,7 +198,7 @@ public class ConfigLine {
 		
 		for(ILine l : this.lines)
 		{
-			if(l instanceof ILineComment)
+			if(l instanceof ILineComment && this.commentsEnabled)
 			{
 				ILineComment line = (ILineComment)l;
 				String attatched = "";
@@ -258,46 +267,53 @@ public class ConfigLine {
 		for(String str : list)
 		{
 			str = str.trim();
-			String whitespaced = JavaUtil.toWhiteSpaced(str);
-			if(whitespaced.equals("") || whitespaced.startsWith("" + this.headerWrappers[0]) && whitespaced.endsWith("" + this.headerWrappers[2]))
+			
+			if(this.commentsEnabled)
 			{
-				passedHeader = true;
-				continue;
-			}
-			int index = str.indexOf(this.commentStart);
-			if(index == 0)
-			{
-				if(passedHeader)
-					this.tmpComments.add(new Comment(this.commentStart,str.substring(1, str.length()),index_line));
-				else
+				String whitespaced = JavaUtil.toWhiteSpaced(str);
+				if(whitespaced.equals("") || whitespaced.startsWith("" + this.headerWrappers[0]) && whitespaced.endsWith("" + this.headerWrappers[2]))
 				{
-					//add custom header comments
-					Comment c = new Comment(this.commentStart,str.substring(1, str.length()),-1);
-					if(!this.headerComments.contains(c))
-						this.headerComments.add(c);
+					passedHeader = true;
+					continue;
 				}
-				continue;
-			}
-			else if(index != -1)
-			{
-				this.tmpComments.add(new Comment(this.commentStart,str.substring(index, str.length()),true,index_line));
+				int index = str.indexOf(this.commentStart);
+				if(index == 0)
+				{
+					if(passedHeader)
+						this.tmpComments.add(new Comment(this.commentStart,str.substring(1, str.length()),index_line));
+					else
+					{
+						//add custom header comments
+						Comment c = new Comment(this.commentStart,str.substring(1, str.length()),-1);
+						if(!this.headerComments.contains(c))
+							this.headerComments.add(c);
+					}
+					continue;
+				}
+				else if(index != -1)
+				{
+					this.tmpComments.add(new Comment(this.commentStart,str.substring(index, str.length()),true,index_line));
+				}
 			}
 			str = removeComments(str);
 			this.lines.add(getLineFromString(str));
 			index_line++;
 		}
-		for(Comment c : this.tmpComments)
+		if(this.commentsEnabled)
 		{
-			if(c.index == this.lines.size())
+			for(Comment c : this.tmpComments)
 			{
-				this.footerComments.add(c);
-				continue;
+				if(c.index == this.lines.size())
+				{
+					this.footerComments.add(c);
+					continue;
+				}
+				ILine line = this.lines.get(c.index);
+				c.index = -1;
+				((ILineComment)line).addComment(c);
 			}
-			ILine line = this.lines.get(c.index);
-			c.index = -1;
-			((ILineComment)line).addComment(c);
+			this.tmpComments.clear();
 		}
-		this.tmpComments.clear();
 		this.origin = this.toFileLines();
 	}
 	
@@ -449,6 +465,8 @@ public class ConfigLine {
 	 */
 	public void addLineComment(ILine line,String comment)
 	{
+		if(!this.commentsEnabled)
+			return;
 		if(!this.containsLine(line,this.checkMetaByDefault() ))
 			return;
 		line = this.getUpdatedLine(line);
@@ -461,6 +479,8 @@ public class ConfigLine {
 	 */
 	public void addHeaderComment(String comment)
 	{
+		if(!this.commentsEnabled)
+			return;
 		this.headerComments.add(new Comment(this.commentStart,comment,-1));
 	}
 	
@@ -470,6 +490,8 @@ public class ConfigLine {
 	 */
 	public void addFooterComment(String comment)
 	{
+		if(!this.commentsEnabled)
+			return;
 		this.footerComments.add(new Comment(this.commentStart,comment,-1));
 	}
 	/**
@@ -478,6 +500,8 @@ public class ConfigLine {
 	 */
 	public void removeFooterComment(String comment)
 	{
+		if(!this.commentsEnabled)
+			return;
 		this.footerComments.remove(new Comment(this.commentStart,comment,-1));
 	}
 	/**
@@ -486,6 +510,8 @@ public class ConfigLine {
 	 */
 	public void removeHeaderComment(String comment)
 	{
+		if(!this.commentsEnabled)
+			return;
 		this.headerComments.remove(new Comment(this.commentStart,comment,-1));
 	}
 	/**
@@ -493,6 +519,8 @@ public class ConfigLine {
 	 */
 	public void removeLineComment(ILine line,String comment)
 	{
+		if(!this.commentsEnabled)
+			return;
 		if(!this.containsLine(line,this.checkMetaByDefault() ))
 			return;
 		line = this.getUpdatedLine(line);
