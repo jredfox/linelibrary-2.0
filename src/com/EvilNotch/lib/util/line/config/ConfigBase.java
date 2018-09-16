@@ -70,6 +70,23 @@ public abstract class ConfigBase {
 	{
 		this.file = f;
 	}
+	
+	public ConfigBase(File f,String header,char commentStart,List<String> comments)
+	{
+		this(f,header,true,commentStart,comments,"</>".toCharArray());
+	}
+	
+	public ConfigBase(File f,String header,boolean allowComments,char commentStart,List<String> comments,char[] headWrapper)
+	{
+		this.file = f;
+		this.header = header;
+		this.commentsEnabled = allowComments;
+		this.commentStart = commentStart;
+		for(String s : comments)
+			this.addHeaderCommentAdmin(s);
+		this.headerWrappers = headWrapper;
+	}
+			
 	/**
 	 * call this to load the config from the disk manual 
 	 * call after constructing is now called as this is more proper
