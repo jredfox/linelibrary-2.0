@@ -24,7 +24,7 @@ public class ConfigLine {
 	public String stream = null;
 	
 	/**
-	 * this is what signifys a comment for the config start
+	 * this is what signify's a comment for the config start
 	 */
 	public char commentStart = '#';
 	/**
@@ -78,14 +78,16 @@ public class ConfigLine {
 	}
 	public ConfigLine(File f,String header,char commentStart,List<String> comments)
 	{
-		this(f,header,comments,"</>".toCharArray(),commentStart,':','"',"<>".toCharArray(),"[]".toCharArray());
+		this(f,header,commentStart,comments,"</>".toCharArray(),':','"',"<>".toCharArray(),"[]".toCharArray());
 	}
-	public ConfigLine(File f,String header,List<String> comments,char[] headerWrappers,char commentStart,char sep,char q,char[] metaBrackets,char[] arrBrackets)
+	public ConfigLine(File f,String header,char commentStart,List<String> comments,char[] headerWrappers,char sep,char q,char[] metaBrackets,char[] arrBrackets)
 	{
 		this.file = f;
 		if(header != null)
 			this.header = header;//non null values accepted
 		this.commentStart = commentStart;
+		for(String s : comments)
+			this.addHeaderComment(s);
 		this.sep = sep;
 		this.quote = q;
 		this.headerWrappers = headerWrappers;
@@ -149,7 +151,7 @@ public class ConfigLine {
 		this.saveConfig(alphabitize,false,true);
 	}
 	/**
-	 * doesn't call alphabitize and no message will appear either. This is direct saveToDisk() method
+	 * doesn't call alphabetize and no message will appear either. This is direct saveToDisk() method
 	 */
 	public void saveToDisk()
 	{
