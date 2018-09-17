@@ -94,15 +94,18 @@ public class LineUtil {
 		for(int i=0;i<input.length();i++)
 		{
 			char c = input.charAt(i);
+			
 			if(c == q && c != ' ')
 				insideQuote = !insideQuote;
-			if(c == lbracket && c != ' ')
+			
+			if(c == lbracket && c != ' ' && !insideQuote)
 			{
 				int rBracket = getRightBracket(i,input,lbracket,rbracket);
 				builder.append(input.substring(i,rBracket+1));
 				i = rBracket;
 				continue;//continue will force i++ thus you need the varible = to what it should be next
 			}
+			
 			if(c == split && !insideQuote)
 			{
 				builder.append(JavaUtil.uniqueSplitter);
@@ -111,6 +114,50 @@ public class LineUtil {
 			{
 				builder.append(c);
 			}
+		}
+		return builder.toString().split(JavaUtil.uniqueSplitter);
+	}
+	/**
+	 * split a string with it skipping things inside of quotes and insideof lrbrackets
+	 */
+	public static String[] selectString(String input,String split,char q,String lbrackets,String rbrackets)
+	{
+		StringBuilder builder = new StringBuilder();
+		boolean insideQuote = false;
+		for(int i=0;i<input.length();i++)
+		{
+			char c = input.charAt(i);
+			
+			if(c == q)
+				insideQuote = !insideQuote;
+			
+			if(split.contains("" + c) && !insideQuote)
+			{
+				int rIndex = i+split.length();
+				if(rIndex > input.length())
+					rIndex--;
+				String s = input.substring(i, i+split.length());
+				if(split.equals(s))
+				{
+					builder.append(JavaUtil.uniqueSplitter);
+					i += split.length()-1;
+					continue;
+				}
+			}
+			
+			if(lbrackets.contains("" + c) && !insideQuote)
+			{
+				int index = lbrackets.indexOf(c);
+				char lbracket = lbrackets.charAt(index);
+				char rbracket = rbrackets.charAt(index);
+				
+				int rBracket = getRightBracket(i,input,lbracket,rbracket);
+				builder.append(input.substring(i,rBracket+1));
+				
+				i = rBracket;
+				continue;//continue will force i++ thus you need the varible = to what it should be next
+			}
+			builder.append(c);
 		}
 		return builder.toString().split(JavaUtil.uniqueSplitter);
 	}

@@ -1,10 +1,6 @@
 package com.thetimewarior.java;
 
-import java.io.File;
-
-import com.EvilNotch.lib.util.line.Line;
-import com.EvilNotch.lib.util.line.LineArray;
-import com.EvilNotch.lib.util.line.config.ConfigLine;
+import com.EvilNotch.lib.util.line.LineDynamicLogic;
 
 @SuppressWarnings("unused")
 public class MainJava {
@@ -17,8 +13,8 @@ public class MainJava {
 		cfg.alphabitize();
 		System.out.println(cfg);
 		cfg.saveConfig(false);*/
-		LineArray arr = new LineArray("modid:block = [0,1,2,3,4,[0,1,2,3,[0],4],6,7,8]");
-		System.out.println(arr);
+		LineDynamicLogic logic = new LineDynamicLogic("\"modid:bl,,ock\" <meta,,Data>,modid:block2 || modid:block");
+		System.out.println(logic);
 //		LineArray line = new LineArray("%modid@block% $1^ = %this is a string%",'@','%',"$^");
 	}
 

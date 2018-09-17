@@ -10,7 +10,7 @@ import com.EvilNotch.lib.util.line.comment.ICommentStorage;
 
 import net.minecraft.util.ResourceLocation;
 
-public class Line implements ILineSeperation,ILineComment{
+public class Line extends LineComment implements ILineSeperation{
 	
 	public String modid;
 	public String name;
@@ -18,10 +18,6 @@ public class Line implements ILineSeperation,ILineComment{
 	public char seperator;
 	public char quote;
 	public boolean hasQuote;
-	/**
-	 * list of comments attached to the list
-	 */
-	public List<ICommentAttatch> comments = new ArrayList<ICommentAttatch>();
 	
 	public Line(String str)
 	{
@@ -99,7 +95,7 @@ public class Line implements ILineSeperation,ILineComment{
 	@Override
 	public int hashCode()
 	{
-		return this.getId().hashCode();
+		return this.toString(true).hashCode();
 	}
 	@Override
 	public String toString()
@@ -120,21 +116,6 @@ public class Line implements ILineSeperation,ILineComment{
 		if(this.hasQuote && !comparible)
 			str = "" + this.quote + str + this.quote;
 		return str;
-	}
-
-	@Override
-	public void addComment(ICommentAttatch c) {
-		this.comments.add(c);
-	}
-
-	@Override
-	public void removeComment(ICommentAttatch c) {
-		this.comments.remove(c);
-	}
-
-	@Override
-	public List<ICommentAttatch> getComments() {
-		return this.comments;
 	}
 	
 	@Override
