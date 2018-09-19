@@ -15,8 +15,8 @@ public class LineUtil {
 	//line char config
 	public static final char sep = ':';
 	public static final char quote = '"';
-	public static final String metaBrackets = "<>";
-	public static final String lrBrackets = "[]";
+	public static final char[] metaBrackets = "<>".toCharArray();
+	public static final char[] arrBrackets = "[]".toCharArray();
 	
 	/**
 	 * use getLinefromString(String str,char sep,char quote,char[] metaBrackets,char[] arrBrackets) instead
@@ -28,19 +28,19 @@ public class LineUtil {
 		{
 			return new LineArray(str);
 		}
-		else if(str.contains("<") || str.contains("{"))
+		else if(str.contains("" + metaBrackets[0]) || str.contains("{"))
 			return new LineMeta(str);
 
 		return new Line(str);
 	}
-	public static ILine getLineFromString(String str,char sep,char quote,char[] metaBrackets,String lrBrackets) 
+	public static ILine getLineFromString(String str,char sep,char quote,char[] metaBrackets,char[] lrBrackets) 
 	{
 		if(str.contains("="))
 		{
-			return new LineArray(str,sep,quote,new String(metaBrackets),lrBrackets.toCharArray());
+			return new LineArray(str,sep,quote,metaBrackets,lrBrackets);
 		}
 		else if(str.contains("" + metaBrackets[0]) || str.contains("{"))
-			return new LineMeta(str,sep,quote,new String(metaBrackets));
+			return new LineMeta(str,sep,quote,metaBrackets);
 
 		return new Line(str,sep,quote);
 	}
@@ -121,7 +121,7 @@ public class LineUtil {
 			
 			if(c == lbracket && c != ' ' && !insideQuote)
 			{
-				int rBracket = getRightBracket(i,input,lbracket,rbracket);
+				int rBracket = getRightBracket(i,input,q,lbracket,rbracket);
 				builder.append(input.substring(i,rBracket+1));
 				i = rBracket;
 				continue;//continue will force i++ thus you need the varible = to what it should be next
@@ -172,7 +172,7 @@ public class LineUtil {
 				char lbracket = lbrackets.charAt(index);
 				char rbracket = rbrackets.charAt(index);
 				
-				int rBracket = getRightBracket(i,input,lbracket,rbracket);
+				int rBracket = getRightBracket(i,input,q,lbracket,rbracket);
 				builder.append(input.substring(i,rBracket+1));
 				
 				i = rBracket;
@@ -183,16 +183,20 @@ public class LineUtil {
 		return builder.toString().split(JavaUtil.uniqueSplitter);
 	}
 	
-	public static int getRightBracket(int lindex,String str,char lbracket,char rbracket) 
+	public static int getRightBracket(int lindex,String str,char q,char lbracket,char rbracket) 
 	{
     	int lb = 0;
+    	boolean insideQuote = false;
     	for(int i=lindex;i<str.length();i++)
     	{
     		String ch = str.substring(i, i+1);
+    		
+    		if(ch.charAt(0) == q)
+    			insideQuote = !insideQuote;
 			
-    		if(ch.equals("" + lbracket))
+    		if(ch.equals("" + lbracket) && !insideQuote)
     			lb++;
-    		else if(ch.equals("" + rbracket))
+    		else if(ch.equals("" + rbracket) && !insideQuote)
     			lb--;
     		if(lb == 0)
     			return i;
@@ -225,10 +229,35 @@ public class LineUtil {
 	/**
 	 * get json/nbt/whatever you need to parse
 	 */
-	public static String getNBT(int i, String str, char lbracket, char rbracket) {
+	public static String getBrackets(int i, String str,char q, char lbracket, char rbracket) {
 		if(!str.contains("" + lbracket))
 			return null;
-		int index = getRightBracket(i, str, lbracket, rbracket);
+		int index = getRightBracket(i, str,q, lbracket, rbracket);
 		return str.substring(JavaUtil.findFirstChar(i,str,lbracket), index+1);
+	}
+	/**
+	 * unlike getBrackets() it gets the first set of brackets that's not inside of quotes
+	 */
+	public static String getFirstBrackets(int currentIndex, String str, char quote, char lbracket, char rbracket) 
+	{
+		boolean hasLBracket = false;
+		boolean insideQuote = false;
+		StringBuilder builder = new StringBuilder();
+		for(int i=currentIndex;i<str.length();i++)
+		{
+			char c = str.charAt(i);
+			if(c == quote)
+				insideQuote = !insideQuote;
+			
+			if(c == rbracket && !insideQuote)
+				break;
+			
+			if(hasLBracket)
+				builder.append(c);
+			
+			if(c == lbracket && !insideQuote)
+				hasLBracket = true;
+		}
+		return builder.toString();
 	}
 }

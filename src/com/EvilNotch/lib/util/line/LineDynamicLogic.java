@@ -16,15 +16,15 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 	//line char config
 	public char sep;
 	public char quote;
-	public String metaBrackets;
-	public String lrBrackets;
+	public char[] metaBrackets;
+	public char[] lrBrackets;
 	
 	public LineDynamicLogic(String str)
 	{
-		this(str,LineUtil.orLogic,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.lrBrackets);
+		this(str,LineUtil.orLogic,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.arrBrackets);
 	}
 	
-	public LineDynamicLogic(String str,String orLogic,char sep,char q,String mBrackets,String lrBrackets)
+	public LineDynamicLogic(String str,String orLogic,char sep,char q,char[] mBrackets,char[] lrBrackets)
 	{
 		this.orLogic = orLogic;
 		
@@ -38,16 +38,16 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 	
 	public void parse(String str) 
 	{
-		String[] ores = LineUtil.selectString(str, this.orLogic, this.quote, this.metaBrackets.charAt(0) + "{",  this.metaBrackets.charAt(1) + "}");
+		String[] ores = LineUtil.selectString(str, this.orLogic, this.quote, this.metaBrackets[0] + "{",  this.metaBrackets[1] + "}");
 		for(int oreIndex=0;oreIndex<ores.length;oreIndex++)
 		{
 			String section = ores[oreIndex];
-			String[] parts = LineUtil.selectString(section, ",",this.quote,  this.metaBrackets.charAt(0) + "{",  this.metaBrackets.charAt(1) + "}");
+			String[] parts = LineUtil.selectString(section, ",",this.quote,  this.metaBrackets[0] + "{",  this.metaBrackets[1] + "}");
 			
 			List<ILine> list = new ArrayList<ILine>();
 			for(String line : parts)
 			{
-				ILine l = LineUtil.getLineFromString(line,this.sep,this.quote,this.metaBrackets.toCharArray(),lrBrackets);
+				ILine l = LineUtil.getLineFromString(line,this.sep,this.quote,this.metaBrackets,lrBrackets);
 				list.add(l);
 			}
 			this.lines.put(oreIndex,list);

@@ -15,22 +15,23 @@ import com.EvilNotch.lib.util.line.LineArray;
 import com.EvilNotch.lib.util.line.LineMeta;
 import com.EvilNotch.lib.util.line.comment.Comment;
 import com.EvilNotch.lib.util.line.comment.IComment;
+import com.EvilNotch.lib.util.line.util.LineUtil;
 
 public class ConfigLine extends ConfigBase{
 	
 	/**
 	 * seperator for all the lines that use them
 	 */
-	public char sep = ':';
-	public char quote = '"';
+	public char sep = LineUtil.sep;
+	public char quote = LineUtil.quote;
 	/**
 	 * brackets for metadata of LineMeta
 	 */
-	public char[] metaBrackets = new char[]{'<','>'};
+	public char[] metaBrackets = LineUtil.metaBrackets;
 	/**
 	 * brackets for LineArray defaults
 	 */
-	public char[] arrBrackets = new char[]{'[',']'};
+	public char[] arrBrackets = LineUtil.arrBrackets;
 	
 	public ConfigLine(String inputStream,File output)
 	{
@@ -44,7 +45,7 @@ public class ConfigLine extends ConfigBase{
 	
 	public ConfigLine(File f,String header,char commentStart,List<String> comments)
 	{
-		this(f,header,true,commentStart,comments,"</>".toCharArray(),':','"',"<>".toCharArray(),"[]".toCharArray());
+		this(f,header,true,commentStart,comments,"</>".toCharArray(),LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.arrBrackets);
 	}
 	public ConfigLine(File f,String header,boolean allowComments,char commentStart,List<String> comments,char[] headerWrappers,char sep,char q,char[] metaBrackets,char[] arrBrackets)
 	{
@@ -63,10 +64,10 @@ public class ConfigLine extends ConfigBase{
 	{
 		if(str.contains("="))
 		{
-			return new LineArray(str,this.sep,this.quote,new String(this.metaBrackets),this.arrBrackets);
+			return new LineArray(str,this.sep,this.quote,this.metaBrackets,this.arrBrackets);
 		}
 		else if(str.contains("" + this.metaBrackets[0]) || str.contains("{"))
-			return new LineMeta(str,this.sep,this.quote,new String(this.metaBrackets));
+			return new LineMeta(str,this.sep,this.quote,this.metaBrackets);
 
 		return new Line(str,this.sep,this.quote);
 	}

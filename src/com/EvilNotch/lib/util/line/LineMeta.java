@@ -28,7 +28,7 @@ public class LineMeta extends Line implements ILineMeta{
 	/**
 	 * this can be customized besides just "<",">" as brackets
 	 */
-	public String metaBrackets;
+	public char[] metaBrackets;
 	
 	public LineMeta(String str)
 	{
@@ -37,13 +37,13 @@ public class LineMeta extends Line implements ILineMeta{
 	/**
 	 * Equivalent to LineItemstack except it's a faster parser
 	 */
-	public LineMeta(String str, char sep,char quote,String metaBrackets) 
+	public LineMeta(String str, char sep,char quote,char[] metaBrackets) 
 	{
 		super(str,sep,quote);
 		this.metaBrackets = metaBrackets;
 		int currentIndex = this.getId().length();
 		
-		this.meta = LineUtil.getNBT(currentIndex, str, this.metaBrackets.charAt(0), this.metaBrackets.charAt(1));
+		this.meta = LineUtil.getFirstBrackets(currentIndex, str,this.quote, this.metaBrackets[0], this.metaBrackets[1]);
 		if(this.meta == null)
 			this.meta = "";
 		
@@ -61,7 +61,7 @@ public class LineMeta extends Line implements ILineMeta{
 			this.metaDataId = arr.id;
 		}
 		
-		this.nbt = LineUtil.getNBT(currentIndex, str, '{', '}');
+		this.nbt = LineUtil.getBrackets(currentIndex, str,this.quote, '{', '}');
 	}
 	
 	@Override
@@ -108,7 +108,7 @@ public class LineMeta extends Line implements ILineMeta{
 			String me = this.meta;
 			if(this.metaQuote && !comparible)
 				me = "\"" + me + (this.metaDataId != ' ' ? this.metaDataId : "") + "\"";
-			m += " " + this.metaBrackets.charAt(0) + me + "" + this.metaBrackets.charAt(1);
+			m += " " + this.metaBrackets[0] + me + "" + this.metaBrackets[1];
 		}
 		if(this.nbt != null && !this.nbt.isEmpty())
 			m += " " + this.nbt;
