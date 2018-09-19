@@ -1189,9 +1189,9 @@ public class JavaUtil {
 	
 	public static int findFirstChar(int index,String str, char c) 
 	{
-		for(int i=index;i<str.length();i++)
-			if(str.charAt(i) == c)
-				return i;
+		for(int j=index;j<str.length();j++)
+			if(str.charAt(j) == c)
+				return j;
 		return -1;
 	}
 	

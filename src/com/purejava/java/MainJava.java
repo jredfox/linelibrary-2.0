@@ -1,6 +1,7 @@
 package com.purejava.java;
 
-import com.EvilNotch.lib.util.line.LineDynamicLogic;
+import com.EvilNotch.lib.util.line.Line;
+import com.EvilNotch.lib.util.line.LineMeta;
 import com.EvilNotch.lib.util.line.util.LineUtil;
 
 @SuppressWarnings("unused")
@@ -18,7 +19,10 @@ public class MainJava {
 //		System.out.println(logic);
 //		LineArray line = new LineArray("%modid@block% $1^ = %this is a string%",'@','%',"$^");
 		
-		System.out.println(LineUtil.getBrackets(0, "{powered:1,SpawnData:{},name:\"aa{}{{{{{}aa\"}", '"', '{', '}'));
+		Line left = new LineMeta("modid:block <a>");
+		Line right = new Line("modid:block");
+	
+		System.out.println(LineUtil.isMetaEqual(left, right));
 	}
 
 }

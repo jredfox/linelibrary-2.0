@@ -182,7 +182,9 @@ public class LineUtil {
 		}
 		return builder.toString().split(JavaUtil.uniqueSplitter);
 	}
-	
+	/**
+	 * lindex must be the left bracket starting value
+	 */
 	public static int getRightBracket(int lindex,String str,char q,char lbracket,char rbracket) 
 	{
     	int lb = 0;
@@ -232,8 +234,9 @@ public class LineUtil {
 	public static String getBrackets(int i, String str,char q, char lbracket, char rbracket) {
 		if(!str.contains("" + lbracket))
 			return null;
+		i = str.indexOf(lbracket);
 		int index = getRightBracket(i, str,q, lbracket, rbracket);
-		return str.substring(JavaUtil.findFirstChar(i,str,lbracket), index+1);
+		return str.substring(i, index+1);
 	}
 	/**
 	 * unlike getBrackets() it gets the first set of brackets that's not inside of quotes

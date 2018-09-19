@@ -30,7 +30,7 @@ public class Line extends LineComment implements ILineSeperation{
 		this.seperator = sep;
 		this.quote = q;
 		
-		if(str.contains("" + this.quote))
+		if(str.trim().startsWith("" + this.quote))
 		{
 			str = JavaUtil.parseQuotes(str, 0, "" + this.quote);
 			this.hasQuote = true;
@@ -40,7 +40,8 @@ public class Line extends LineComment implements ILineSeperation{
 		if(this.hasQuote)
 		{
 			this.modid = parts[0];
-			this.name = parts[1];
+			if(parts.length == 2)
+				this.name = parts[1];
 		}
 		else
 		{
