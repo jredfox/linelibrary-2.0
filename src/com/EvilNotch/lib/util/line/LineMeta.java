@@ -8,7 +8,7 @@ public class LineMeta extends Line implements ILineMeta{
 	/**
 	 * standard metadata for everything that is not an int
 	 */
-	public String meta = null;
+	public String meta = "";
 	/**
 	 * primitive version when it is a number
 	 */
@@ -42,7 +42,11 @@ public class LineMeta extends Line implements ILineMeta{
 		super(str,sep,quote);
 		this.metaBrackets = metaBrackets;
 		int currentIndex = this.getId().length();
-		this.meta = JavaUtil.parseQuotes(str,currentIndex, this.metaBrackets);
+		
+		this.meta = LineUtil.getNBT(currentIndex, str, this.metaBrackets.charAt(0), this.metaBrackets.charAt(1));
+		if(this.meta == null)
+			this.meta = "";
+		
 		currentIndex += this.meta.isEmpty() ? 0 : this.meta.length()+2;
 		//calculate the current index before parsing string meta first so it goes straight to the nbt
 		if(this.meta.startsWith("" + this.quote))
@@ -57,9 +61,7 @@ public class LineMeta extends Line implements ILineMeta{
 			this.metaDataId = arr.id;
 		}
 		
-		this.nbt = JavaUtil.parseQuotes(str, currentIndex, "{}");
-		if(!this.nbt.isEmpty())
-			this.nbt = "{" + this.nbt + "}";
+		this.nbt = LineUtil.getNBT(currentIndex, str, '{', '}');
 	}
 	
 	@Override

@@ -1187,4 +1187,12 @@ public class JavaUtil {
 		return ' ';
 	}
 	
+	public static int findFirstChar(int index,String str, char c) 
+	{
+		for(int i=index;i<str.length();i++)
+			if(str.charAt(i) == c)
+				return i;
+		return -1;
+	}
+	
 }

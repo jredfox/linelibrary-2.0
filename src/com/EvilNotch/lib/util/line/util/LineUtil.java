@@ -222,4 +222,13 @@ public class LineUtil {
 			rmeta = ((ILineMeta)right).equalsMeta(left);
 		return lmeta && rmeta;
 	}
+	/**
+	 * get json/nbt/whatever you need to parse
+	 */
+	public static String getNBT(int i, String str, char lbracket, char rbracket) {
+		if(!str.contains("" + lbracket))
+			return null;
+		int index = getRightBracket(i, str, lbracket, rbracket);
+		return str.substring(JavaUtil.findFirstChar(i,str,lbracket), index+1);
+	}
 }
