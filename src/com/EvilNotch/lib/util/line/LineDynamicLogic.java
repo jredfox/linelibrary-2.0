@@ -18,13 +18,14 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 	public char quote;
 	public char[] metaBrackets;
 	public char[] lrBrackets;
+	public String invalid;
 	
 	public LineDynamicLogic(String str)
 	{
-		this(str,LineUtil.orLogic,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.arrBrackets);
+		this(str,LineUtil.orLogic,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.arrBrackets,LineUtil.lineInvalid);
 	}
 	
-	public LineDynamicLogic(String str,String orLogic,char sep,char q,char[] mBrackets,char[] lrBrackets)
+	public LineDynamicLogic(String str,String orLogic,char sep,char q,char[] mBrackets,char[] lrBrackets,String invalid)
 	{
 		this.orLogic = orLogic;
 		
@@ -32,6 +33,7 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 		this.quote = q;
 		this.metaBrackets = mBrackets;
 		this.lrBrackets = lrBrackets;
+		this.invalid = invalid;
 		
 		this.parse(str);
 	}
@@ -47,7 +49,7 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 			List<ILine> list = new ArrayList<ILine>();
 			for(String line : parts)
 			{
-				ILine l = LineUtil.getLineFromString(line,this.sep,this.quote,this.metaBrackets,lrBrackets);
+				ILine l = LineUtil.getLineFromString(line,this.sep,this.quote,this.metaBrackets,lrBrackets,this.invalid);
 				list.add(l);
 			}
 			this.lines.put(oreIndex,list);

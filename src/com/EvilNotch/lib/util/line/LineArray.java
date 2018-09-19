@@ -14,12 +14,12 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	
 	public LineArray(String str)
 	{
-		this(str,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.arrBrackets);
+		this(str,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.arrBrackets,LineUtil.lineInvalid);
 	}
 	
-	public LineArray(String str, char sep,char q,char[] metaBrackets,char[] brackets) 
+	public LineArray(String str, char sep,char q,char[] metaBrackets,char[] brackets,String invalid) 
 	{
-		super(str, sep,q,metaBrackets);
+		super(str, sep,q,metaBrackets,invalid);
 		if(str.contains("="))
 		{
 			str = JavaUtil.splitFirst(str,'=')[1].trim();

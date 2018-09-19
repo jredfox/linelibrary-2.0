@@ -19,18 +19,21 @@ public class Line extends LineComment implements ILineSeperation{
 	public char seperator;
 	public char quote;
 	public boolean hasQuote;
+	public String invalid;
 	
 	public Line(String str)
 	{
-		this(str,LineUtil.sep,LineUtil.quote);
+		this(str,LineUtil.sep,LineUtil.quote,LineUtil.lineInvalid);
 	}
 	
-	public Line(String str,char sep,char q)
+	public Line(String str,char sep,char q,String invalid)
 	{
 		this.seperator = sep;
 		this.quote = q;
+		this.invalid = invalid;
 		
-		if(str.trim().startsWith("" + this.quote))
+		str = str.trim();
+		if(str.startsWith("" + this.quote))
 		{
 			str = JavaUtil.parseQuotes(str, 0, "" + this.quote);
 			this.hasQuote = true;
@@ -53,11 +56,11 @@ public class Line extends LineComment implements ILineSeperation{
 				String restOfLine = parts[1].trim();
 				for(char c : restOfLine.toCharArray())
 				{
-					if(c == ' ')
+					if(this.invalid.contains("" + c))
 						break;
 					builder.append(c);
 				}
-				this.name = builder.toString();
+				this.name = builder.toString().trim();
 			}
 		}
 	}

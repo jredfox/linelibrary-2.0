@@ -17,6 +17,7 @@ public class LineUtil {
 	public static final char quote = '"';
 	public static final char[] metaBrackets = "<>".toCharArray();
 	public static final char[] arrBrackets = "[]".toCharArray();
+	public static final String lineInvalid = "<{=";
 	
 	/**
 	 * use getLinefromString(String str,char sep,char quote,char[] metaBrackets,char[] arrBrackets) instead
@@ -33,16 +34,16 @@ public class LineUtil {
 
 		return new Line(str);
 	}
-	public static ILine getLineFromString(String str,char sep,char quote,char[] metaBrackets,char[] lrBrackets) 
+	public static ILine getLineFromString(String str,char sep,char quote,char[] metaBrackets,char[] lrBrackets,String invalid) 
 	{
 		if(str.contains("="))
 		{
-			return new LineArray(str,sep,quote,metaBrackets,lrBrackets);
+			return new LineArray(str,sep,quote,metaBrackets,lrBrackets,invalid);
 		}
 		else if(str.contains("" + metaBrackets[0]) || str.contains("{"))
-			return new LineMeta(str,sep,quote,metaBrackets);
+			return new LineMeta(str,sep,quote,metaBrackets,invalid);
 
-		return new Line(str,sep,quote);
+		return new Line(str,sep,quote,invalid);
 	}
 	
 	/**

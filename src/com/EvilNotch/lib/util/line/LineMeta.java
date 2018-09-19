@@ -12,7 +12,7 @@ public class LineMeta extends Line implements ILineMeta{
 	/**
 	 * primitive version when it is a number
 	 */
-	public Object metaData = null;
+	public Number metaData = null;
 	/**
 	 * save the id of the primitive/string type if any
 	 */
@@ -32,14 +32,14 @@ public class LineMeta extends Line implements ILineMeta{
 	
 	public LineMeta(String str)
 	{
-		this(str,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets);
+		this(str,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.lineInvalid);
 	}
 	/**
 	 * Equivalent to LineItemstack except it's a faster parser
 	 */
-	public LineMeta(String str, char sep,char quote,char[] metaBrackets) 
+	public LineMeta(String str, char sep,char quote,char[] metaBrackets,String invalid) 
 	{
-		super(str,sep,quote);
+		super(str,sep,quote,invalid);
 		this.metaBrackets = metaBrackets;
 		int currentIndex = this.getId().length();
 		
@@ -57,7 +57,7 @@ public class LineMeta extends Line implements ILineMeta{
 		else if(JavaUtil.isStringNum(this.meta))
 		{
 			LineArray.Entry arr = LineUtil.parseWeight(this.meta,this.quote);
-			this.metaData = arr.obj;
+			this.metaData = (Number)arr.obj;
 			this.metaDataId = arr.id;
 		}
 		

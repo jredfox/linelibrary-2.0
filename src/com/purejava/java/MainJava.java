@@ -19,10 +19,8 @@ public class MainJava {
 //		System.out.println(logic);
 //		LineArray line = new LineArray("%modid@block% $1^ = %this is a string%",'@','%',"$^");
 		
-		Line left = new LineMeta("modid:block <a>");
-		Line right = new Line("modid:block");
-	
-		System.out.println(LineUtil.isMetaEqual(left, right));
+		Line left = new Line("modid:block");
+		LineMeta right = new LineMeta("modid:block <aaaa>");
 	}
 
 }

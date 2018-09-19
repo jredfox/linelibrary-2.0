@@ -32,6 +32,10 @@ public class ConfigLine extends ConfigBase{
 	 * brackets for LineArray defaults
 	 */
 	public char[] arrBrackets = LineUtil.arrBrackets;
+	/**
+	 * a list of invalid chars for parsing Line in the constructor
+	 */
+	public String invalid = LineUtil.lineInvalid;
 	
 	public ConfigLine(String inputStream,File output)
 	{
@@ -54,6 +58,7 @@ public class ConfigLine extends ConfigBase{
 		this.quote = q;
 		this.metaBrackets = metaBrackets;
 		this.arrBrackets = arrBrackets;
+		this.invalid = this.metaBrackets[0] + "{=";
 	}
 	
 	/**
@@ -64,11 +69,11 @@ public class ConfigLine extends ConfigBase{
 	{
 		if(str.contains("="))
 		{
-			return new LineArray(str,this.sep,this.quote,this.metaBrackets,this.arrBrackets);
+			return new LineArray(str,this.sep,this.quote,this.metaBrackets,this.arrBrackets,this.invalid);
 		}
 		else if(str.contains("" + this.metaBrackets[0]) || str.contains("{"))
-			return new LineMeta(str,this.sep,this.quote,this.metaBrackets);
+			return new LineMeta(str,this.sep,this.quote,this.metaBrackets,this.invalid);
 
-		return new Line(str,this.sep,this.quote);
+		return new Line(str,this.sep,this.quote,this.invalid);
 	}
 }
