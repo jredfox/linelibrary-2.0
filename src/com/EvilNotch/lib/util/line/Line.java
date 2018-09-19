@@ -7,6 +7,7 @@ import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.comment.IComment;
 import com.EvilNotch.lib.util.line.comment.ICommentAttatch;
 import com.EvilNotch.lib.util.line.comment.ICommentStorage;
+import com.EvilNotch.lib.util.line.util.LineUtil;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -21,7 +22,7 @@ public class Line extends LineComment implements ILineSeperation{
 	
 	public Line(String str)
 	{
-		this(str,':','"');
+		this(str,LineUtil.sep,LineUtil.quote);
 	}
 	
 	public Line(String str,char sep,char q)
@@ -95,7 +96,7 @@ public class Line extends LineComment implements ILineSeperation{
 	@Override
 	public int hashCode()
 	{
-		return this.toString(true).hashCode();
+		return this.getId().hashCode();
 	}
 	@Override
 	public String toString()

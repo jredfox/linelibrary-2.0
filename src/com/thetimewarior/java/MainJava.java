@@ -13,7 +13,7 @@ public class MainJava {
 		cfg.alphabitize();
 		System.out.println(cfg);
 		cfg.saveConfig(false);*/
-		LineDynamicLogic logic = new LineDynamicLogic("\"modid:bl,,ock\" <meta,,Data>,modid:block2 || modid:block");
+		LineDynamicLogic logic = new LineDynamicLogic("\"modid:block\" <metaData>,modid:block2 || modid:block");
 		System.out.println(logic);
 //		LineArray line = new LineArray("%modid@block% $1^ = %this is a string%",'@','%',"$^");
 	}

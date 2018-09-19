@@ -11,6 +11,6 @@ public interface ILineMeta extends ILine{
 	 * @return An array of data that isn't the identifier and isn't after the equal sign
 	 */
 	public String[] getMetaData();
-	public boolean equalsMeta(ILineMeta other);
+	public boolean equalsMeta(ILine other);
 
 }

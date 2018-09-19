@@ -17,6 +17,7 @@ import com.EvilNotch.lib.util.line.comment.Comment;
 import com.EvilNotch.lib.util.line.comment.IComment;
 import com.EvilNotch.lib.util.line.comment.ICommentAttatch;
 import com.EvilNotch.lib.util.line.comment.ICommentStorage;
+import com.EvilNotch.lib.util.line.util.LineUtil;
 /**
  * this is the class you should use for custom ILines
  * @author jredfox
@@ -385,11 +386,7 @@ public abstract class ConfigBase {
 			{
 				if(!compareMeta)
 					return i;
-				if(!(l instanceof ILineMeta) && c instanceof LineMeta || l instanceof ILineMeta && !(c instanceof ILineMeta) )
-					continue;
-				ILineMeta line = (ILineMeta)l;
-				ILineMeta compare = (ILineMeta)c;
-				if(line.equalsMeta(compare) && compare.equalsMeta(line))
+				if(LineUtil.isMetaEqual(l,c))
 					return i;
 			}
 		}

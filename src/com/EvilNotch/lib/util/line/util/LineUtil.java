@@ -2,12 +2,22 @@ package com.EvilNotch.lib.util.line.util;
 
 import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.ILine;
+import com.EvilNotch.lib.util.line.ILineMeta;
 import com.EvilNotch.lib.util.line.Line;
 import com.EvilNotch.lib.util.line.LineArray;
 import com.EvilNotch.lib.util.line.LineMeta;
 import com.EvilNotch.lib.util.line.LineArray.Entry;
 
 public class LineUtil {
+	//this section is to remove hard coding the same varibles multiple times
+	public static final String orLogic = "||";
+	
+	//line char config
+	public static final char sep = ':';
+	public static final char quote = '"';
+	public static final String metaBrackets = "<>";
+	public static final String lrBrackets = "[]";
+	
 	/**
 	 * use getLinefromString(String str,char sep,char quote,char[] metaBrackets,char[] arrBrackets) instead
 	 */
@@ -22,6 +32,17 @@ public class LineUtil {
 			return new LineMeta(str);
 
 		return new Line(str);
+	}
+	public static ILine getLineFromString(String str,char sep,char quote,char[] metaBrackets,String lrBrackets) 
+	{
+		if(str.contains("="))
+		{
+			return new LineArray(str,sep,quote,new String(metaBrackets),lrBrackets.toCharArray());
+		}
+		else if(str.contains("" + metaBrackets[0]) || str.contains("{"))
+			return new LineMeta(str,sep,quote,new String(metaBrackets));
+
+		return new Line(str,sep,quote);
 	}
 	
 	/**
@@ -177,5 +198,28 @@ public class LineUtil {
     			return i;
     	}
 		return -1;
+	}
+
+	public static boolean isNullMeta(ILineMeta meta) 
+	{
+		for(String s : meta.getMetaData())
+		{
+			if(!JavaUtil.isStringNullOrEmpty(s))
+				return false;
+		}
+		return true;
+	}
+	/**
+	 * find out if lines are metadata with checks
+	 */
+	public static boolean isMetaEqual(ILine left, ILine right) 
+	{
+		boolean lmeta = true;
+		boolean rmeta = true;
+		if(left instanceof ILineMeta)
+			lmeta = ((ILineMeta)left).equalsMeta(right);
+		if(right instanceof ILineMeta)
+			rmeta = ((ILineMeta)right).equalsMeta(left);
+		return lmeta && rmeta;
 	}
 }

@@ -14,7 +14,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	
 	public LineArray(String str)
 	{
-		this(str,':','"',"<>","[]".toCharArray());
+		this(str,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.lrBrackets.toCharArray());
 	}
 	
 	public LineArray(String str, char sep,char q,String metaBrackets,char[] brackets) 

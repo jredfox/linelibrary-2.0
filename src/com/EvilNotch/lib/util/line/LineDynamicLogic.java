@@ -4,34 +4,61 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.EvilNotch.lib.util.JavaUtil;
 import com.EvilNotch.lib.util.line.comment.ICommentAttatch;
 import com.EvilNotch.lib.util.line.util.LineUtil;
 
-public class LineDynamicLogic extends LineComment implements ILine,ILineComment{
+public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 
 	public HashMap<Integer,List<ILine>> lines = new HashMap<Integer,List<ILine>>();
+	public String orLogic;
+	
+	//line char config
+	public char sep;
+	public char quote;
+	public String metaBrackets;
+	public String lrBrackets;
 	
 	public LineDynamicLogic(String str)
 	{
-		String[] ores = LineUtil.selectString(str, "||", '"', "<{", ">}");
+		this(str,LineUtil.orLogic,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.lrBrackets);
+	}
+	
+	public LineDynamicLogic(String str,String orLogic,char sep,char q,String mBrackets,String lrBrackets)
+	{
+		this.orLogic = orLogic;
+		
+		this.sep = sep;
+		this.quote = q;
+		this.metaBrackets = mBrackets;
+		this.lrBrackets = lrBrackets;
+		
+		this.parse(str);
+	}
+	
+	public void parse(String str) 
+	{
+		String[] ores = LineUtil.selectString(str, this.orLogic, this.quote, this.metaBrackets.charAt(0) + "{",  this.metaBrackets.charAt(1) + "}");
 		for(int oreIndex=0;oreIndex<ores.length;oreIndex++)
 		{
 			String section = ores[oreIndex];
-			String[] parts = LineUtil.selectString(section, ",", '"',  "<{", ">}");
+			String[] parts = LineUtil.selectString(section, ",",this.quote,  this.metaBrackets.charAt(0) + "{",  this.metaBrackets.charAt(1) + "}");
 			
 			List<ILine> list = new ArrayList<ILine>();
 			for(String line : parts)
 			{
-				ILine l = LineUtil.getLineFromString(line);
+				ILine l = LineUtil.getLineFromString(line,this.sep,this.quote,this.metaBrackets.toCharArray(),lrBrackets);
 				list.add(l);
 			}
 			this.lines.put(oreIndex,list);
 		}
 	}
-	
+
 	@Override
 	public String getId() 
 	{
+		if(this.lines.size() == 0)
+			return "";
 		return this.getLinesAtPos(0).get(0).getId();
 	}
 	
@@ -50,6 +77,23 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineComment{
 	public String toString()
 	{
 		return this.toString(false);
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(!(obj instanceof ILine) || lines.isEmpty())
+			return false;
+		ILine logic = (ILine)obj;
+		return this.getLinesAtPos(0).get(0).equals(logic);
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		if(this.lines.size() == 0)
+			return -1;
+		return this.getLinesAtPos(0).get(0).hashCode();
 	}
 
 	public String toString(boolean comparible) 
@@ -72,6 +116,49 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineComment{
 				b.append(" || ");
 		}
 		return b.toString();
+	}
+	/**
+	 * return this.toString(true) meaning the meta will be compared without the head values
+	 */
+	@Override
+	public String[] getMetaData()
+	{
+		List<String> list = new ArrayList();
+		for(List<ILine> lines : this.lines.values())
+		{
+			for(ILine line : lines)
+			{
+				StringBuilder b = new StringBuilder();
+				b.append(line.getId());
+				if(line instanceof ILineMeta)
+				{
+					b.append(" ");
+					for(String s : ((ILineMeta)line).getMetaData())
+						b.append(s);
+				}
+				list.add(b.toString());
+			}
+		}
+		String[] parts = JavaUtil.toStaticStringArray(list);
+		return parts;
+	}
+
+	@Override
+	public boolean equalsMeta(ILine o) 
+	{
+		if(!(o instanceof ILineMeta))
+			return LineUtil.isNullMeta(this);
+		
+		String[] meta = this.getMetaData();
+		String[] other = ((ILineMeta)o).getMetaData();
+		if(meta.length != other.length)
+			return false;
+		for(int i=0;i<meta.length;i++)
+		{
+			if(!meta[i].equals(other[i]))
+				return false;
+		}
+		return true;
 	}
 
 }

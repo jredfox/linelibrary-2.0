@@ -12,7 +12,7 @@ public class LineMeta extends Line implements ILineMeta{
 	/**
 	 * primitive version when it is a number
 	 */
-	public Object metaData;
+	public Object metaData = null;
 	/**
 	 * save the id of the primitive/string type if any
 	 */
@@ -28,11 +28,11 @@ public class LineMeta extends Line implements ILineMeta{
 	/**
 	 * this can be customized besides just "<",">" as brackets
 	 */
-	public String metaBrackets = "<>";
+	public String metaBrackets;
 	
 	public LineMeta(String str)
 	{
-		this(str,':','"',"<>");
+		this(str,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets);
 	}
 	/**
 	 * Equivalent to LineItemstack except it's a faster parser
@@ -68,10 +68,13 @@ public class LineMeta extends Line implements ILineMeta{
 		return this.toString().hashCode();
 	}
 	@Override
-	public boolean equalsMeta(ILineMeta other)
+	public boolean equalsMeta(ILine other)
 	{
+		if(!(other instanceof ILineMeta))
+			return LineUtil.isNullMeta(this);
+		
 		String[] meta = this.getMetaData();
-		String[] otherMeta = other.getMetaData();
+		String[] otherMeta = ((ILineMeta)other).getMetaData();
 		
 		if(meta.length != otherMeta.length)
 			return false;
