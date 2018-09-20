@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.EvilNotch.lib.util.JavaUtil;
-import com.EvilNotch.lib.util.line.comment.ICommentAttatch;
 import com.EvilNotch.lib.util.line.util.LineUtil;
 
 public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 
 	public HashMap<Integer,List<ILine>> lines = new HashMap<Integer,List<ILine>>();
 	public String orLogic;
+	public String andLogic;
 	
 	//line char config
 	public char sep;
@@ -22,12 +22,13 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 	
 	public LineDynamicLogic(String str)
 	{
-		this(str,LineUtil.orLogic,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.arrBrackets,LineUtil.lineInvalid);
+		this(str,LineUtil.orLogic,LineUtil.andLogic,LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.arrBrackets,LineUtil.lineInvalid);
 	}
 	
-	public LineDynamicLogic(String str,String orLogic,char sep,char q,char[] mBrackets,char[] lrBrackets,String invalid)
+	public LineDynamicLogic(String str,String orLogic,String andLogic,char sep,char q,char[] mBrackets,char[] lrBrackets,String invalid)
 	{
 		this.orLogic = orLogic;
+		this.andLogic = andLogic;
 		
 		this.sep = sep;
 		this.quote = q;
@@ -44,7 +45,7 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 		for(int oreIndex=0;oreIndex<ores.length;oreIndex++)
 		{
 			String section = ores[oreIndex];
-			String[] parts = LineUtil.selectString(section, ",",this.quote,  this.metaBrackets[0] + "{",  this.metaBrackets[1] + "}");
+			String[] parts = LineUtil.selectString(section, this.andLogic,this.quote,  this.metaBrackets[0] + "{",  this.metaBrackets[1] + "}");
 			
 			List<ILine> list = new ArrayList<ILine>();
 			for(String line : parts)
@@ -108,14 +109,14 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 			{
 				ILine l = lines.get(i);
 				boolean inRange = i+1 < lines.size();
-				String comma = inRange ? ", " : "";
+				String comma = inRange ? " " + this.andLogic + " " : "";
 				if(comparible)
 					b.append(l.getComparible() + comma);
 				else
 					b.append(l.toString() + comma);
 			}
 			if(section+1 < this.lines.size())
-				b.append(" || ");
+				b.append(" " + this.orLogic + " ");
 		}
 		return b.toString();
 	}
@@ -125,7 +126,7 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 	@Override
 	public String[] getMetaData()
 	{
-		List<String> list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		for(List<ILine> lines : this.lines.values())
 		{
 			for(ILine line : lines)
@@ -161,6 +162,10 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 				return false;
 		}
 		return true;
+	}
+	
+	public ILine getLine(int sector,int index){
+		return this.lines.get(sector).get(index);
 	}
 
 }

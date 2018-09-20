@@ -46,10 +46,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	@Override
 	public Object getHead(int index) 
 	{
-		Object obj = this.heads.get(index);
-		if(obj instanceof Entry)
-			obj = ((Entry)obj).obj;
-		return obj;
+		return this.heads.get(index);
 	}
 	/**
 	 * set the lines value
@@ -57,15 +54,6 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	@Override
 	public void setHead(Object obj,int index) 
 	{
-		if(!(obj instanceof Entry))
-		{
-			if(obj instanceof String)
-				obj = new Entry(obj,'"');
-			else if(obj instanceof Number && !(obj instanceof Integer) && !(obj instanceof Double))
-				obj = new Entry(obj,JavaUtil.getNumId((Number)obj) );
-			else
-				obj = new Entry(obj);
-		}
 		this.heads.set(index, obj);
 	}
 	@Override
@@ -121,37 +109,6 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 	public Object parseWeight(String weight) 
 	{
 		return LineUtil.parseWeight(weight, this.quote);
-	}
-	
-	public static class Entry
-	{
-		public Object obj;
-		public char id;
-		public Entry(Object obj)
-		{
-			 this(obj,' ');
-		}
-		public Entry(Object obj,char c)
-		{
-			this.obj = obj;
-			this.id = c;
-		}
-		@Override
-		public String toString()
-		{
-			if(this.obj instanceof Number)
-			{
-				return this.obj.toString() + (this.id == ' ' ? "" : this.id);
-			}
-			else if(this.obj instanceof String)
-			{
-				String quote = "";
-				if(this.id != ' ')
-					quote += this.id;
-				return quote + this.obj.toString() + quote;
-			}
-			return this.obj.toString();
-		}
 	}
 	
 }

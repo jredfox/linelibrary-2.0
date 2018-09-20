@@ -1,6 +1,8 @@
 package com.purejava.java;
 
+import com.EvilNotch.lib.util.line.ILineHeadArray;
 import com.EvilNotch.lib.util.line.Line;
+import com.EvilNotch.lib.util.line.LineDynamicLogic;
 import com.EvilNotch.lib.util.line.LineMeta;
 import com.EvilNotch.lib.util.line.util.LineUtil;
 
@@ -15,12 +17,7 @@ public class MainJava {
 		cfg.alphabitize();
 		System.out.println(cfg);
 		cfg.saveConfig(false);*/
-//		LineDynamicLogic logic = new LineDynamicLogic("\"modid:block\" <metaData>,modid:block2 || modid:block");
-//		System.out.println(logic);
 //		LineArray line = new LineArray("%modid@block% $1^ = %this is a string%",'@','%',"$^");
-		
-		Line left = new Line("modid:block");
-		LineMeta right = new LineMeta("modid:block <aaaa>");
 	}
 
 }

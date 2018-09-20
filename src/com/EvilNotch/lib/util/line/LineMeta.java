@@ -56,9 +56,8 @@ public class LineMeta extends Line implements ILineMeta{
 		}
 		else if(JavaUtil.isStringNum(this.meta))
 		{
-			LineArray.Entry arr = LineUtil.parseWeight(this.meta,this.quote);
-			this.metaData = (Number)arr.obj;
-			this.metaDataId = arr.id;
+			this.metaData  = (Number)LineUtil.parseWeight(this.meta,this.quote);
+			this.metaDataId = JavaUtil.getNumId(this.meta);
 		}
 		
 		this.nbt = LineUtil.getBrackets(currentIndex, str,this.quote, '{', '}');

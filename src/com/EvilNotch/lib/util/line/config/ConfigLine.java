@@ -12,6 +12,7 @@ import com.EvilNotch.lib.util.line.ILine;
 import com.EvilNotch.lib.util.line.ILineMeta;
 import com.EvilNotch.lib.util.line.Line;
 import com.EvilNotch.lib.util.line.LineArray;
+import com.EvilNotch.lib.util.line.LineDynamicLogic;
 import com.EvilNotch.lib.util.line.LineMeta;
 import com.EvilNotch.lib.util.line.comment.Comment;
 import com.EvilNotch.lib.util.line.comment.IComment;
@@ -37,6 +38,12 @@ public class ConfigLine extends ConfigBase{
 	 */
 	public String invalid = LineUtil.lineInvalid;
 	
+	/**
+	 * line dynamic logic config "||,&&" operators
+	 */
+	public String orLogic = LineUtil.orLogic;
+	public String andLogic = LineUtil.andLogic;
+	
 	public ConfigLine(String inputStream,File output)
 	{
 		super(inputStream,output);
@@ -49,16 +56,18 @@ public class ConfigLine extends ConfigBase{
 	
 	public ConfigLine(File f,String header,char commentStart,List<String> comments)
 	{
-		this(f,header,true,commentStart,comments,"</>".toCharArray(),LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.arrBrackets);
+		this(f,header,true,commentStart,comments,"</>".toCharArray(),LineUtil.sep,LineUtil.quote,LineUtil.metaBrackets,LineUtil.arrBrackets,LineUtil.orLogic,LineUtil.andLogic);
 	}
-	public ConfigLine(File f,String header,boolean allowComments,char commentStart,List<String> comments,char[] headerWrappers,char sep,char q,char[] metaBrackets,char[] arrBrackets)
+	public ConfigLine(File f,String header,boolean allowComments,char commentStart,List<String> comments,char[] headerWrappers,char sep,char q,char[] metaBrackets,char[] arrBrackets,String orLogic,String andLogic)
 	{
 		super(f,header,allowComments,commentStart,comments,headerWrappers);
 		this.sep = sep;
 		this.quote = q;
 		this.metaBrackets = metaBrackets;
 		this.arrBrackets = arrBrackets;
-		this.invalid = this.metaBrackets[0] + "{=";
+		this.invalid = this.metaBrackets[0] + "{=" + this.orLogic + this.andLogic;
+		this.orLogic = orLogic;
+		this.andLogic = andLogic;
 	}
 	
 	/**
@@ -67,7 +76,9 @@ public class ConfigLine extends ConfigBase{
 	@Override
 	public ILine getLineFromString(String str) 
 	{
-		if(str.contains("="))
+		if(str.contains(this.orLogic) || str.contains(this.andLogic))
+			return new LineDynamicLogic(str, this.orLogic, this.andLogic, this.sep, this.quote, this.metaBrackets, this.arrBrackets, this.invalid);
+		else if(str.contains("="))
 		{
 			return new LineArray(str,this.sep,this.quote,this.metaBrackets,this.arrBrackets,this.invalid);
 		}

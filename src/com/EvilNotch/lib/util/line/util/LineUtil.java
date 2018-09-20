@@ -6,11 +6,11 @@ import com.EvilNotch.lib.util.line.ILineMeta;
 import com.EvilNotch.lib.util.line.Line;
 import com.EvilNotch.lib.util.line.LineArray;
 import com.EvilNotch.lib.util.line.LineMeta;
-import com.EvilNotch.lib.util.line.LineArray.Entry;
 
 public class LineUtil {
 	//this section is to remove hard coding the same varibles multiple times
 	public static final String orLogic = "||";
+	public static final String andLogic = "&&";
 	
 	//line char config
 	public static final char sep = ':';
@@ -49,7 +49,7 @@ public class LineUtil {
 	/**
 	 * get the primitive object from the string
 	 */
-	public static Entry parseWeight(String weight,char quote) 
+	public static Object parseWeight(String weight,char quote) 
 	{
 		String whitespaced = JavaUtil.toWhiteSpaced(weight);
 		String lowerCase = whitespaced.toLowerCase();
@@ -57,7 +57,7 @@ public class LineUtil {
 		
 		if(lowerCase.equals("true") || lowerCase.equals("false"))
 		{
-			return new Entry(Boolean.parseBoolean(whitespaced));
+			return Boolean.parseBoolean(whitespaced);
 		}
 		else if(JavaUtil.isStringNum(whitespaced))
 		{
@@ -98,11 +98,9 @@ public class LineUtil {
 			else if(dflag){
 				obj = Double.parseDouble(num);
 			}
-			if(flag)
-				idNum = JavaUtil.toUpperCaseChar(idNum);
-			return  new Entry(obj,idNum);
+			return obj;
 		}
-		return weight.contains("" + quote) ? new Entry(JavaUtil.parseQuotes(weight, 0, "" + quote),quote) : new Entry(weight.trim());
+		return weight.contains("" + quote) ? JavaUtil.parseQuotes(weight, 0, "" + quote) : weight.trim();
 	}
 	
 	/**

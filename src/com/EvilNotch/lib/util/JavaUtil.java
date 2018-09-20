@@ -46,6 +46,7 @@ import net.minecraft.util.ResourceLocation;
 public class JavaUtil {
 	public static final String SPECIALCHARS = "~!@#$%^&*()_+`'-=/,.<>?\"{}[]:;|" + "\\";
 	public static final String uniqueSplitter = "\u00A9" + "#";
+	public static String numberIds = "bslfdi";
 	
 	/**
 	 * cast without loosing data and have a random negative number
@@ -1085,7 +1086,7 @@ public class JavaUtil {
 	public static boolean isStringNum(String s)
 	{
 		String valid = "1234567890.-";
-		String valid_endings = "bslfdi";//byte,short,long,float,double,int
+		String valid_endings = numberIds;//byte,short,long,float,double,int
 		String check = ".";
 		int indexdot = 0;
 		if(s.indexOf('.') == 0 || s.indexOf('.') == s.length() - 1 || s.indexOf('-') > 0)
@@ -1193,6 +1194,17 @@ public class JavaUtil {
 			if(str.charAt(j) == c)
 				return j;
 		return -1;
+	}
+	/**
+	 * get the id from the string to parse
+	 * @return ' ' if none is found
+	 */
+	public static char getNumId(String str) {
+		str = str.trim();
+		String last = "" + str.charAt(str.length()-1);
+		if(numberIds.contains(last))
+			return last.toLowerCase().charAt(0);
+		return ' ';
 	}
 	
 }
