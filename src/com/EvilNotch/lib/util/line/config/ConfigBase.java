@@ -271,11 +271,11 @@ public abstract class ConfigBase {
 				if(index == 0)
 				{
 					if(passedHeader)
-						this.tmpComments.add(new Comment(this.commentStart,str.substring(1, str.length()),index_line));
+						this.tmpComments.add(new Comment(this.commentStart,str,index_line));
 					else
 					{
 						//add custom header comments
-						Comment c = new Comment(this.commentStart,str.substring(1, str.length()),-1);
+						Comment c = new Comment(this.commentStart,str);
 						if(!this.headerComments.contains(c))
 							this.headerComments.add(c);
 					}
@@ -286,7 +286,7 @@ public abstract class ConfigBase {
 					this.tmpComments.add(new Comment(this.commentStart,str.substring(index, str.length()),true,index_line));
 				}
 			}
-			str = removeComments(str);
+			str = getRawLine(str);
 			this.lines.add(getLineFromString(str));
 			index_line++;
 		}
@@ -325,7 +325,10 @@ public abstract class ConfigBase {
 			}
 		}
 	}
-	public String removeComments(String strline) 
+    /**
+     * get a line without any comments what so ever
+     */
+	public String getRawLine(String strline) 
 	{
 		int index = strline.indexOf(this.commentStart);
 		if(index == -1)

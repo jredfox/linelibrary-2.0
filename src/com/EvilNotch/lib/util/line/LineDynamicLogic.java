@@ -45,7 +45,7 @@ public class LineDynamicLogic extends LineComment implements ILine,ILineMeta{
 		for(int oreIndex=0;oreIndex<ores.length;oreIndex++)
 		{
 			String section = ores[oreIndex];
-			String[] parts = LineUtil.selectString(section, this.andLogic,this.quote,  this.metaBrackets[0] + "{",  this.metaBrackets[1] + "}");
+			String[] parts = LineUtil.selectString(section, this.andLogic,this.quote, this.metaBrackets[0] + "{",  this.metaBrackets[1] + "}");
 			
 			List<ILine> list = new ArrayList<ILine>();
 			for(String line : parts)

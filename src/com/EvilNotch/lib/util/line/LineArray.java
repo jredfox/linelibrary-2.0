@@ -71,16 +71,36 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 		if(!this.heads.isEmpty())
 		{
 			str += " = ";
-			if(this.lbracket != ' ')
-				str += "" + this.lbracket;
-			for(Object obj : this.heads)
-				str += obj.toString() + ",";
-			str = str.substring(0, str.length()-1);
-			if(this.rbracket != ' ')
-				str += "" + this.rbracket;
+			str += this.getListString(this.heads);
 		}
 		return str;
 	}
+	/**
+	 * calls itself recursively until all lists are converted into strings
+	 */
+	@SuppressWarnings("unchecked")
+	public String getListString(List<Object> li) 
+	{
+		String str = "";
+        if(this.lbracket != ' ')
+            str += "" + this.lbracket;
+		for(Object obj : li)
+		{
+			if(obj instanceof List)
+                str += this.getListString((List<Object>)obj) + ",";
+			else if(obj instanceof Number && !(obj instanceof Integer) && !(obj instanceof Double))
+                str += obj.toString() + JavaUtil.getNumId((Number)obj) + ",";
+            else if (obj instanceof String)
+                str += "\"" + obj + "\",";
+            else
+                str += obj.toString() + ",";
+		}
+		str = str.substring(0, str.length()-1);
+        if(this.rbracket != ' ')
+            str += "" + this.rbracket;
+		return str;
+	}
+
 	/**
 	 * Recursively populate the array from string to actual objects
 	 */

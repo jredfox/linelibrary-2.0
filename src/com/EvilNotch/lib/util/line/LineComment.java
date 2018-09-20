@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.EvilNotch.lib.util.line.comment.ICommentAttatch;
+import com.EvilNotch.lib.util.line.comment.ICommentStorage;
 
-public abstract class LineComment implements ILine,ILineComment{
+public abstract class LineComment implements ILine,ICommentStorage{
 	
 	/**
 	 * list of comments attached to the list

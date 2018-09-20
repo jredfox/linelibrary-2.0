@@ -1,9 +1,8 @@
 package com.purejava.java;
 
-import com.EvilNotch.lib.util.line.ILineHeadArray;
-import com.EvilNotch.lib.util.line.Line;
-import com.EvilNotch.lib.util.line.LineDynamicLogic;
-import com.EvilNotch.lib.util.line.LineMeta;
+import java.util.List;
+
+import com.EvilNotch.lib.util.line.LineArray;
 import com.EvilNotch.lib.util.line.util.LineUtil;
 
 @SuppressWarnings("unused")
@@ -17,7 +16,9 @@ public class MainJava {
 		cfg.alphabitize();
 		System.out.println(cfg);
 		cfg.saveConfig(false);*/
-//		LineArray line = new LineArray("%modid@block% $1^ = %this is a string%",'@','%',"$^");
+		LineArray line = new LineArray("modid:block = (0,1,2,3,(0,1,2l),5)",':','"',LineUtil.metaBrackets,"()".toCharArray(),LineUtil.lineInvalid);
+		List<Object> li = (List<Object>) line.heads.get(4);
+		System.out.println(line);
 	}
 
 }

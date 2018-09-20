@@ -10,6 +10,13 @@ public class Comment implements ICommentAttatch{
 	 */
 	public int index;
 	
+	/**
+	 * simple constructor for non attatcheable comments
+	 */
+	public Comment(char c,String comment){
+		this(c,comment,-1);
+	}
+	
 	public Comment(char c,String comment,int index)
 	{
 		this(c,comment,false,index);
@@ -55,6 +62,6 @@ public class Comment implements ICommentAttatch{
 		if(!(obj instanceof Comment))
 			return false;
 		Comment c = (Comment)obj;
-		return this.toString().equals(c.toString());
+		return this.cStart == c.cStart && this.comment.equals(c.comment);
 	}
 }
