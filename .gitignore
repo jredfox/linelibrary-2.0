@@ -1,0 +1,16 @@
+
+src/com/evilnotch/lib/util/archive/Archive.java
+src/com/evilnotch/lib/util/archive/ArchiveEntry.java
+src/com/evilnotch/lib/util/primitive/BooleanObj.java
+src/com/evilnotch/lib/util/primitive/DoubleObj.java
+src/com/evilnotch/lib/util/primitive/ByteObj.java
+src/com/evilnotch/lib/util/primitive/FloatObj.java
+src/com/evilnotch/lib/util/primitive/IModNumber.java
+src/com/evilnotch/lib/util/primitive/IntObj.java
+src/com/evilnotch/lib/util/primitive/LongObj.java
+src/com/evilnotch/lib/util/primitive/ShortObj.java
+src/com/evilnotch/lib/util/simple/IEnumContainer.java
+src/com/evilnotch/lib/util/simple/PairObj.java
+src/com/evilnotch/lib/util/simple/PairString.java
+src/com/evilnotch/lib/util/simple/PointId.java
+src/com/evilnotch/lib/util/simple/RomanNumerals.java
