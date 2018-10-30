@@ -7,6 +7,7 @@ import com.evilnotch.lib.util.line.ILine;
 import com.evilnotch.lib.util.line.ILineMeta;
 import com.evilnotch.lib.util.line.Line;
 import com.evilnotch.lib.util.line.LineArray;
+import com.evilnotch.lib.util.line.LineDynamicLogic;
 import com.evilnotch.lib.util.line.LineMeta;
 
 public class LineUtil {
@@ -49,25 +50,29 @@ public class LineUtil {
 	@Deprecated
 	public static ILine getLineFromString(String str)
 	{
-		if(str.contains("="))
-		{
-			return new LineArray(str);
-		}
-		else if(str.contains("" + metaBrackets[0]) || str.contains("{"))
-			return new LineMeta(str);
-
-		return new Line(str);
+		return getLineFromString(str, sep, quote, metaBrackets, arrBrackets, orLogic, andLogic, lineInvalid);
 	}
-	public static ILine getLineFromString(String str,char sep,char quote,char[] metaBrackets,char[] lrBrackets,String invalid) 
+	
+	public static ILine getLineFromString(String str,char sep,char quote,char[] metaBrackets,char[] lrBrackets,String orLogic, String andLogic, String invalid) 
 	{
-		if(str.contains("="))
-		{
-			return new LineArray(str,sep,quote,metaBrackets,lrBrackets,invalid);
+		String arr = "=";
+		String lmeta = "" + metaBrackets[0] + "{" + lrBrackets[0];
+		String rmeta = "" + metaBrackets[1] + "}" + lrBrackets[1];
+		
+		if(LineUtil.containsParsing(orLogic, quote, lmeta, rmeta, str) || LineUtil.containsParsing(andLogic, quote, lmeta, rmeta, str))
+		{		
+			return new LineDynamicLogic(str, orLogic, andLogic, sep, quote, metaBrackets, lrBrackets, invalid);
 		}
-		else if(str.contains("" + metaBrackets[0]) || str.contains("{"))
-			return new LineMeta(str,sep,quote,metaBrackets,invalid);
-
-		return new Line(str,sep,quote,invalid);
+		else if(LineUtil.containsParsingChars(arr, quote,str))
+		{
+			return new LineArray(str, sep, quote, metaBrackets, lrBrackets, invalid);
+		}
+		else if(LineUtil.containsParsingChars(lmeta, quote,str))
+		{
+			return new LineMeta(str, sep, quote, metaBrackets, invalid);
+		}
+		
+		return new Line(str);
 	}
 	
 	/**
@@ -285,5 +290,26 @@ public class LineUtil {
 				hasLBracket = true;
 		}
 		return builder.toString();
+	}
+
+	public static boolean containsParsing(String parsingStr,char q,String lbrackets, String rbrackets, String input) 
+	{
+		return LineUtil.selectString(input, parsingStr, q, lbrackets, rbrackets).length > 1;
+	}
+	/**
+	 * look for chars outside of quotes
+	 */
+	public static boolean containsParsingChars(String toCompare, char q, String input) 
+	{
+		boolean insideQuote = false;
+		
+		for(char c : input.toCharArray())
+		{
+			if(c == q)
+				insideQuote = !insideQuote;
+			if(!insideQuote && toCompare.contains("" + c))
+				return true;
+		}
+		return false;
 	}
 }

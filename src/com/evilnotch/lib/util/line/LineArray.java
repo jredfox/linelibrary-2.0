@@ -143,6 +143,7 @@ public class LineArray extends LineMeta implements ILineHeadArray{
 		return LineUtil.parseWeight(weight, this.quote);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object> getHeadList(int index) 
 	{
